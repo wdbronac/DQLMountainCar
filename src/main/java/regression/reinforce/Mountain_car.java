@@ -24,6 +24,7 @@ public class Mountain_car {
     }
 
 
+
     public INDArray transition(INDArray state, INDArray action, INDArray r, INDArray eoe) {
         /*
         System.out.println(action.shape()[0]);
@@ -32,16 +33,18 @@ public class Mountain_car {
         System.out.println(state.shape()[1]);
         System.out.println(state.getRow(0).length());
         */
+        //todo: verifier que eoe est bien false avant
+        //todo: verifier que le vecteur des rewards est bien -1 partout de base
         INDArray next_state = Nd4j.zeros(2, state.shape()[1]);
-        next_state.putRow(1, state.getRow(1).addi((action.addi(-1)).addi(cos(state.getRow(0).mul(3)).mul(-0.0025)).mul(0.001)));
-        next_state.putRow(0, state.getRow(0).addi(next_state.getRow(1)));
+        next_state.putRow(1, state.getRow(1).dup().addi((action.dup().addi(-1).mul(0.001)).addi(cos(state.getRow(0).dup().mul(3)).mul(-0.0025))));
+        next_state.putRow(0, state.getRow(0).dup().addi(next_state.getRow(1).dup()));
         for (int i = 0; i < state.shape()[1]; i++) {
             if (next_state.getDouble(0,i) > this.position[1]) {
                 r.put(0, i, 10);
                 eoe.put(0,i, 1);
             }
             if (next_state.getDouble(0,i) < this.position[0]) {
-                next_state.put(0, i, 0);
+                next_state.put(1, i, 0);
                 r.put(0,i,-10);
             }
         }
@@ -49,7 +52,7 @@ public class Mountain_car {
         //TODO: regler ce pb de min max
         for (int k = 0; k < state.shape()[1]; k++) {
             next_state.put(0,k, Math.min(Math.max(next_state.getDouble(0, k), this.position[0]), this.position[1]));
-            next_state.put(1, k, Math.min(Math.max(next_state.getDouble(0, k), this.velocity[0]), this.velocity[1]));
+            next_state.put(1, k, Math.min(Math.max(next_state.getDouble(1, k), this.velocity[0]), this.velocity[1]));
             //ok c est cette methode qu il faut utiliser
         }
         return next_state;
@@ -65,7 +68,7 @@ public class Mountain_car {
         states.putRow(0, Nd4j.rand(1,n).mul(this.position[1] - this.position[0]).addi(this.position[0]))  ;
         states.putRow(1, Nd4j.rand(1,n).mul(this.velocity[1] - this.velocity[0]).addi(this.velocity[0]));
         //actions = Nd4j.rand(1, n).mul(3); //todo: verifier si c est bien affecte
-        actions = Nd4j.getExecutioner().execAndReturn(new Floor(Nd4j.rand(1, n).mul(3))); //todo: verifier si c est bien affecte
+        actions.putRow(0,Nd4j.getExecutioner().execAndReturn(new Floor(Nd4j.rand(1, n).mul(3)))); //todo: verifier si c est bien affecte
         INDArray next_states = transition(states, actions, rewards, eoes);
         return next_states;
     }

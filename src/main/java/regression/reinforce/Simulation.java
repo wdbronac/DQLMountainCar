@@ -1,12 +1,15 @@
 package regression.reinforce;
 
 
+import java.io.FileWriter;
 import java.util.Arrays;
 
 import java.awt.Color;
 import javax.swing.JPanel;
 
+import au.com.bytecode.opencsv.CSVWriter;
 import org.deeplearning4j.optimize.api.IterationListener;
+import org.deeplearning4j.ui.weights.HistogramIterationListener;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
 import org.jfree.chart.axis.NumberAxis;
@@ -100,6 +103,7 @@ public class Simulation {
         final MultiLayerNetwork net = new MultiLayerNetwork(conf);
         net.init();
         net.setListeners(Collections.singletonList((IterationListener) new ScoreIterationListener(1)));
+        net.setListeners(new HistogramIterationListener(1));
 
 
         //generer la dataset
@@ -125,10 +129,11 @@ public class Simulation {
         DeepQ Q  = new DeepQ(net, gamma, lrate, na);
         for (int p = 0; p<num_iterations; p++) {
             Q.update(states, actions, next_states, rewards, batchSize, rng, nEpochs);//todo: mettre les actions dans gen_dataset
+            //on plot les Q-values obtenues
+            plot_Q(position, velocity, Q, resolution,p );
         }
 
-        //on plot les Q-values obtenues
-        plot_Q(position, velocity, Q, resolution );
+
     }
 
 
@@ -141,16 +146,16 @@ public class Simulation {
                 .iterations(iterations)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
                 .learningRate(learningRate)
-                .weightInit(WeightInit.XAVIER)
+                .weightInit(WeightInit.RELU)
                 .updater(Updater.NESTEROVS).momentum(0.9)
-                .list(3)
+                .list(2)
                 .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(numHiddenNodes)
                         .activation("relu")
                         .build())
-                .layer(1, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
-                        .activation("relu")
-                        .build())
-                .layer(2, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
+//                .layer(1, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+//                        .activation("relu")
+//                        .build())
+                .layer(1, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
                         .activation("identity")
                         .nIn(numHiddenNodes).nOut(numOutputs).build())
                 .pretrain(false).backprop(true).build();
@@ -210,7 +215,7 @@ public class Simulation {
     }
     */
 
-    private static void plot_Q(double [] position, double[] velocity, DeepQ deepQ, int resolution ) throws IOException{
+    private static void plot_Q(double [] position, double[] velocity, DeepQ deepQ, int resolution, int i ) throws IOException{
         System.out.println("Creating the image...");
         //verifier parce que je vais avoir un max de pbs avec la shape...
         //building the matrix for plotting
@@ -231,7 +236,7 @@ public class Simulation {
         INDArray image = Nd4j.getExecutioner().exec(new IAMax(result), 0);
         image = image.reshape(resolution, resolution);
         System.out.println("Result computed.");
-        String outputFile = "/Users/william/Documents/imagetestdeeplearning4j/image.png"; //todo: faire qu on rentre le path au debut du fichier
+        String outputFile = System.getProperty("user.dir")+"/images/image"+i+".png";
         ImageRender.render(image, outputFile);
         System.out.println("Image Created.");
 
@@ -239,11 +244,35 @@ public class Simulation {
 
 
 
-    public static void plot_dataset(INDArray states, INDArray actions, INDArray next_states) {
+
+    public static void plot_dataset(INDArray states, INDArray actions, INDArray next_states) throws IOException {
         System.out.println("Plotting Dataset...");
-        JPanel chartPanel =new ChartPanel(createChart(createDataset(states, actions, next_states)));
-        chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
-        System.out.println("Dataset Plotted.");
+//        JPanel chartPanel =new ChartPanel(createChart(createDataset(states, actions, next_states)));
+//        chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
+
+        int N = states.shape()[1]; //todo verifier que ce soit bien le bon truc
+
+
+        //writes the header of the csv file
+        String[] header = {"state1", "state2", "action", "next_state1", "next_state2"};
+        CSVWriter writer = new CSVWriter(new FileWriter(System.getProperty("user.dir")+"/images/dataset.csv"), ',');
+        // feed in your array (or convert your data to an array)
+
+        writer.writeNext(header);
+        for(int i=0; i<N; i++){
+            String[] entries = new String[5];
+            entries[0] = String.valueOf(states.getDouble(0, i));
+            entries[1] = String.valueOf(states.getDouble(1, i));
+            entries[2] = String.valueOf(actions.getDouble(0, i));
+            entries[3] = String.valueOf(next_states.getDouble(0, i));
+            entries[4] = String.valueOf(next_states.getDouble(1, i));
+            // feed in your array (or convert your data to an array)
+            writer.writeNext(entries);
+        }
+        writer.close(); //warning j ai fait add exception avec un truc de signature
+
+
+        System.out.println("CSV Created.");
         //setContentPane(chartPanel);
     }
 
