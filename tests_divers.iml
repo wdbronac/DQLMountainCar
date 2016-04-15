@@ -233,5 +233,7 @@
     <orderEntry type="library" name="Maven: jfree:jcommon:1.0.16" level="project" />
     <orderEntry type="library" name="Maven: jfree:jfreechart-experimental:1.0.5" level="project" />
     <orderEntry type="library" name="Maven: net.sf.opencsv:opencsv:2.3" level="project" />
+    <orderEntry type="library" name="Maven: nz.ac.waikato.cms.weka:weka-stable:3.6.13" level="project" />
+    <orderEntry type="library" name="Maven: net.sf.squirrel-sql.thirdparty-non-maven:java-cup:0.11a" level="project" />
   </component>
 </module>

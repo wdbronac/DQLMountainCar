@@ -23,6 +23,7 @@ import org.jfree.ui.RectangleInsets;
 import org.jfree.ui.RefineryUtilities;
 import org.deeplearning4j.datasets.iterator.DataSetIterator;
 import org.deeplearning4j.datasets.iterator.impl.ListDataSetIterator;
+import org.nd4j.linalg.api.ops.impl.accum.Max;
 import org.nd4j.linalg.cpu.NDArray;
 import org.nd4j.linalg.factory.NDArrayFactory;
 import org.nd4j.linalg.indexing.NDArrayIndex;
@@ -72,13 +73,13 @@ public class Simulation {
     //Number of iterations per minibatch
     public static final int iterations = 1; // avant: 1
     //Number of epochs (full passes of the data)
-    public static final int nEpochs = 200; // avant: 2000
+    public static final int nEpochs = 2; // avant: 2000
     //How frequently should we plot the network output?
     public static final int plotFrequency = 500;
     //Number of data points
     public static final int nSamples = 1000;
     //Batch size: i.e., each epoch has nSamples/batchSize parameter updates
-    public static final int batchSize = 100;
+    public static final int batchSize = 4096;
     //Network learning rate
     public static final double learningRate = 0.01;
     public static final Random rng = new Random(seed);
@@ -87,8 +88,8 @@ public class Simulation {
 
 
     //taille de la dataset qu on genere, voir comment j agence tout ca
-    public static int size_dataset = 100;
-    public static int num_iterations = 10; // nombre d updates du Q network
+    public static int size_dataset = 100000;
+    public static int num_iterations = 50; // nombre d updates du Q network
 
     //resolution de l image de sortie:
     public static int resolution = 600;
@@ -103,7 +104,7 @@ public class Simulation {
         final MultiLayerNetwork net = new MultiLayerNetwork(conf);
         net.init();
         net.setListeners(Collections.singletonList((IterationListener) new ScoreIterationListener(1)));
-        net.setListeners(new HistogramIterationListener(1));
+        //net.setListeners(new HistogramIterationListener(1));
 
 
         //generer la dataset
@@ -124,7 +125,7 @@ public class Simulation {
 
         //pour un certain nombre de pas, faire update
         double gamma = 0.9;
-        double lrate = 0.01;
+        double lrate = 0.1;
         int na = 3;
         DeepQ Q  = new DeepQ(net, gamma, lrate, na);
         for (int p = 0; p<num_iterations; p++) {
@@ -140,7 +141,7 @@ public class Simulation {
     /** Returns the network configuration, 2 hidden DenseLayers of size 50.
      */
     private static MultiLayerConfiguration getDeepDenseLayerNetworkConfiguration() {
-        final int numHiddenNodes = 50;
+        final int numHiddenNodes = 6;
         return new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .iterations(iterations)
@@ -148,14 +149,17 @@ public class Simulation {
                 .learningRate(learningRate)
                 .weightInit(WeightInit.RELU)
                 .updater(Updater.NESTEROVS).momentum(0.9)
-                .list(2)
+                .list(4)
                 .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(numHiddenNodes)
                         .activation("relu")
                         .build())
-//                .layer(1, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
-//                        .activation("relu")
-//                        .build())
-                .layer(1, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
+                .layer(1, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+                        .activation("relu")
+                        .build())
+                .layer(2, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+                        .activation("relu")
+                        .build())
+                .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
                         .activation("identity")
                         .nIn(numHiddenNodes).nOut(numOutputs).build())
                 .pretrain(false).backprop(true).build();
@@ -233,11 +237,21 @@ public class Simulation {
         }
         System.out.println("Computing the results of the Q value...");
         INDArray result = deepQ.net.output(matrix_tot.transpose()).transpose(); //todo: voir si il faut pas faire des iterateurs
-        INDArray image = Nd4j.getExecutioner().exec(new IAMax(result), 0);
-        image = image.reshape(resolution, resolution);
+        INDArray image_greedy_policy = Nd4j.getExecutioner().exec(new IAMax(result.dup()), 0);
+        image_greedy_policy = image_greedy_policy.reshape(resolution, resolution);
         System.out.println("Result computed.");
-        String outputFile = System.getProperty("user.dir")+"/images/image"+i+".png";
-        ImageRender.render(image, outputFile);
+        String outputFile = System.getProperty("user.dir")+"/images/imagePolicy"+i+".png";
+        ImageRender.render(image_greedy_policy, outputFile);
+        System.out.println("Image Created.");
+
+
+
+        System.out.println("Computing the results of the Q value...");
+        INDArray image_Qvalue = Nd4j.getExecutioner().exec(new Max(result.dup()), 0); //todo: voir si je m en foutrais pas du dup
+        image_Qvalue =image_Qvalue.reshape(resolution, resolution);
+        System.out.println("Result computed.");
+        String outputFile2 = System.getProperty("user.dir")+"/images/imageValue"+i+".png";
+        ImageRender.render(image_Qvalue, outputFile2);
         System.out.println("Image Created.");
 
     }
