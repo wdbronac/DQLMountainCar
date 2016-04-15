@@ -72,15 +72,15 @@ public class Simulation {
     //Number of iterations per minibatch
     public static final int iterations = 1; // avant: 1
     //Number of epochs (full passes of the data)
-    public static final int nEpochs = 200; // avant: 2000
+    public static final int nEpochs = 2000; // avant: 2000
     //How frequently should we plot the network output?
     public static final int plotFrequency = 500;
     //Number of data points
     public static final int nSamples = 1000;
     //Batch size: i.e., each epoch has nSamples/batchSize parameter updates
-    public static final int batchSize = 100;
+    public static final int batchSize = 1000;
     //Network learning rate
-    public static final double learningRate = 0.01;
+    public static final double learningRate = 0.04;
     public static final Random rng = new Random(seed);
     public static final int numInputs = 2;
     public static final int numOutputs = 3;
@@ -140,7 +140,7 @@ public class Simulation {
     /** Returns the network configuration, 2 hidden DenseLayers of size 50.
      */
     private static MultiLayerConfiguration getDeepDenseLayerNetworkConfiguration() {
-        final int numHiddenNodes = 50;
+        final int numHiddenNodes = 100;
         return new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .iterations(iterations)
@@ -148,15 +148,21 @@ public class Simulation {
                 .learningRate(learningRate)
                 .weightInit(WeightInit.RELU)
                 .updater(Updater.NESTEROVS).momentum(0.9)
-                .list(2)
+                .list(5)
                 .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(numHiddenNodes)
                         .activation("relu")
                         .build())
-//                .layer(1, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
-//                        .activation("relu")
-//                        .build())
-                .layer(1, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
-                        .activation("identity")
+               .layer(1, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+                       .activation("relu")
+                       .build())
+                .layer(2, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+                        .activation("relu")
+                        .build())
+                .layer(3, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+                        .activation("relu")
+                        .build())
+                .layer(4, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
+                        .activation("relu")
                         .nIn(numHiddenNodes).nOut(numOutputs).build())
                 .pretrain(false).backprop(true).build();
     }
