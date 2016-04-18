@@ -10,10 +10,8 @@ import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.factory.Nd4j;
 import weka.classifiers.meta.Bagging;
 import weka.classifiers.trees.RandomForest;
-import weka.core.Attribute;
-import weka.core.FastVector;
-import weka.core.Instance;
-import weka.core.Instances;
+import weka.classifiers.trees.lmt.SimpleLinearRegression;
+import weka.core.*;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -30,60 +28,100 @@ public class RandFQ {
     public double lrate;
     public int na;
     public RandomForest rf;
+    public int t  =0;
 
-    public RandFQ(RandomForest rf, double gamma, double lrate, int na) {
+    public RandFQ(double gamma, double lrate, int na) {
 //        this.net = net;
         this.gamma = gamma;
         this.lrate = lrate;
         this.na = na;
-        this.rf = rf;
+        this.rf = new RandomForest();
+        this.rf.setNumTrees(50);
+//        this.rf.setNumFeatures(10); //todo : je ne suis pas sur
+//        this.rf.setMaxDepth(10); //todo : je ne suis pas sur
+
+
+
+
     }
 
 //todo : peut etre convertir les inputs avant l'appel a la fonction
 
 
-    public void update(){ //u
 
-//    public void update(INDArray states_input, INDArray actions,
-//                  INDArray next_states, INDArray rewards,
-//                  int batchSize, Random rng , int nEpochs){ //update le reseau avec les inputs donnes,
+    public void update(INDArray states_input, INDArray actions,
+                  INDArray next_states, INDArray rewards, INDArray eoes,
+                  int batchSize, Random rng , int nEpochs) throws Exception { //update le reseau avec les inputs donnes,
                     // et les actions suivantes possibles (fait un fitting)
         // c est la grosse fonction du programme
-        INDArray states_input_copy = states_input.dup().transpose();
-        int N = states_input_copy.shape()[0];
+        INDArray states_input_copy = states_input.dup();
+        INDArray actions_copy = actions.dup();
+        INDArray next_states_copy = next_states.dup();
+        int N = states_input_copy.shape()[1];
 
 
-        FastVector atts = new FastVector();
-
-
-        Instances newDataset = new Instances("Dataset", atts, 10);
-        Attribute[] state = new Attribute[2];
-        Attribute[] action = new Attribute[3];
-        state[0] = new Attribute("position");
-        state[1] = new Attribute("speed");
-        action[0] = new Attribute("enavant"); //les actions ne correspondent a rien c est juste pour verifier
-        action[1] = new Attribute("pasbouger");
-        action[2] = new Attribute("enarriere");
-
+//        FastVector atts = new FastVector(4);
+        ArrayList<Attribute> atts = new ArrayList<Attribute>(4);
+        Attribute position = new Attribute("position");
+        Attribute speed= new Attribute("speed");
+        Attribute action= new Attribute("action");
+        Attribute qvalue = new Attribute("qvalue");
+        atts.add(position);
+        atts.add(speed);
+        atts.add(action);
+        atts.add(qvalue);
+        Instances newDataset = new Instances("Dataset", atts, N);
+        newDataset.setClassIndex(newDataset.numAttributes() - 1);
 
 //        atts.addElement(current); //todo peut etre que finalement je n ai pas besoin de les ajouter dans le fast vector ?
 
-
-
-
-        Instance instance = new Instance(2);
+        Instance instance = new DenseInstance(4); //todo: peut etre qu il ne faut pas mettre en entree un tableau pour s a
 
 
         //todo : a faire a chaque etape
 
-        for(int p=0; p<states_input.shape()[1]){ //todo: verifier que c est bien ca
-            instance.setValue(state[0], states_input.getDouble(0,p)); //verifier selon sa taille
-            instance.setValue(state[1], states_input.getDouble(1,p));
-            instance.setValue(action[0], );
-            instance.setValue(action[1], );
-            instance.setValue(action[2], );
+        for(int p=0; p<N;p++) { //todo: verifier que c est bien ca
+            instance.setValue(0, states_input_copy.getDouble(0,p)); //verifier selon sa taille
+            instance.setValue(1, states_input_copy.getDouble(1,p));
+            instance.setValue(2, actions_copy.getDouble(0, p)); //todo: peut etre pas ca
+//            instance.setMissing(3);
+            double newQvalue;
+            //computes the new qvalue we want to fit
+            if (t==0) {//if it is the first ime we go in the loop (he first iteration of the program
+                newQvalue = rewards.getDouble(0, p);
+            }
+            else{
+                int numactions = 3;
+                double[] oldvalues = new double[numactions]; //todo verifier shape 0
+                    Instance instanceForPrediction = new DenseInstance(4); //todo: automatiser le 2
+                    instanceForPrediction.setValue(0, next_states_copy.getDouble(0,p));
+                    newDataset.setClassIndex(newDataset.numAttributes() - 1); //todo: c est peut etre n importe quoi de le mettre la
+                    instanceForPrediction.setDataset(newDataset);//c est vraiment pas optimisé voir comment je peux faire pour l optimiser
+                    instanceForPrediction.setValue(1, next_states_copy.getDouble(1, p));
+                for(int k = 0; k<numactions; k++){
+                    instanceForPrediction.setValue(2, k);
+                    oldvalues[k] = rf.distributionForInstance(instanceForPrediction)[0];
+//                    oldvalues[k] = rf.distributionForInstance(instanceForPrediction)[0];
+                }
+                newQvalue = rewards.getDouble(0, p) +this.gamma*(1-eoes.getDouble(0,p))*getMaxValue(oldvalues);
+            }
+            instance.setValue(3, newQvalue); //todo verifier comment il sait que la qvalue c est le label
+//            if(n){
+////                System.out.println("la valeur est positive");
+//            }
             newDataset.add(instance);
         }
+
+
+        newDataset.setClassIndex(newDataset.numAttributes() - 1);
+
+        rf.buildClassifier(newDataset);
+        t++;
+
+        }
+
+
+
 
 
         //todo: tout ça c'est faux pcq il faut que je ma rf prenne en argument state ET une action, et qu elle predise la valeurQ(s,a)
@@ -215,40 +253,40 @@ public class RandFQ {
 
 
 
+//
+//        this.predict(next_states, bestnextvalues, gactions) ; // il y a un pb a regler avec l action
+//        INDArray betterQvalues = rewards.add(bestnextvalues.dup().mul(gamma)); //todo: verifier s il y a bien une copie
+//
+//        //INDArray betterQvalues  = this.net.output(next_states); //todo: voir pcq il y a un pb avec
+//        // les actions
+//        /*todo: je pense que
+//        il y a beaucoup trop de Qold dans l affaire ca peut se simplifier mais pour l instant on laisse
+//        */
+//        //todo: aussi il faut que je change tous les tableaux en nd4j je pense
+//        INDArray newQvalues = oldQvalues.dup();
+//        System.out.println(states_input_copy.shape()[0]);
+//        System.out.println(states_input_copy.shape()[1]);
+//        System.out.println(oldQvalues.shape()[0]);
+//        System.out.println(oldQvalues.shape()[1]);
+//        //todo: if ( c est l action choisie):
+//        for (int k = 0; k<N; k++) { //parcourir chaque transition
+//            int index_action = (int) actions.getDouble(0,k);
+//            System.out.println(index_action);
+//            newQvalues.put(index_action, k ,oldQvalues.getDouble(index_action, k) + betterQvalues.getDouble(0, k)
+//                    - oldQvalues.getDouble(index_action, k) * lrate);
+//        }
+//        //TODO: faire en sorte de regler quand on donne la reward
+//        System.out.println(oldQvalues.shape()[0]);
+//        System.out.println(oldQvalues.shape()[1]);
+//        System.out.println(newQvalues.shape()[0]);
+//        System.out.println(newQvalues.shape()[1]);
+//        final DataSetIterator iterator = getTrainingData(states_input_copy,newQvalues.transpose(), batchSize,rng);
+//        train_net(nEpochs,  iterator);
+//
+//
+//    }
 
-        this.predict(next_states, bestnextvalues, gactions) ; // il y a un pb a regler avec l action
-        INDArray betterQvalues = rewards.add(bestnextvalues.dup().mul(gamma)); //todo: verifier s il y a bien une copie
-
-        //INDArray betterQvalues  = this.net.output(next_states); //todo: voir pcq il y a un pb avec
-        // les actions
-        /*todo: je pense que
-        il y a beaucoup trop de Qold dans l affaire ca peut se simplifier mais pour l instant on laisse
-        */
-        //todo: aussi il faut que je change tous les tableaux en nd4j je pense
-        INDArray newQvalues = oldQvalues.dup();
-        System.out.println(states_input_copy.shape()[0]);
-        System.out.println(states_input_copy.shape()[1]);
-        System.out.println(oldQvalues.shape()[0]);
-        System.out.println(oldQvalues.shape()[1]);
-        //todo: if ( c est l action choisie):
-        for (int k = 0; k<N; k++) { //parcourir chaque transition
-            int index_action = (int) actions.getDouble(0,k);
-            System.out.println(index_action);
-            newQvalues.put(index_action, k ,oldQvalues.getDouble(index_action, k) + betterQvalues.getDouble(0, k)
-                    - oldQvalues.getDouble(index_action, k) * lrate);
-        }
-        //TODO: faire en sorte de regler quand on donne la reward
-        System.out.println(oldQvalues.shape()[0]);
-        System.out.println(oldQvalues.shape()[1]);
-        System.out.println(newQvalues.shape()[0]);
-        System.out.println(newQvalues.shape()[1]);
-        final DataSetIterator iterator = getTrainingData(states_input_copy,newQvalues.transpose(), batchSize,rng);
-        train_net(nEpochs,  iterator);
-
-
-    }
-
-    public void predict(INDArray states, INDArray v, INDArray gactions){ //todo: doit retourner les values et les greedy actions en tout cas dans le python
+    public void predict(INDArray states, INDArray v, INDArray gactions) throws Exception { //todo: doit retourner les values et les greedy actions en tout cas dans le python
         /*
         int N = states.shape()[1];
         // todo : initialiser  a 0 les reward et les eoe meme si on s en fout
@@ -270,35 +308,97 @@ public class RandFQ {
                 System.out.println(newValue.shape()[0]);
                 if (v.getDouble(k,p) <  newValue.getDouble(k,p)) {
                     v.put(0,p, newValue.getDouble(k, p));
-                    gactions.put(0, p, k);
-                }
-            } //on a notre v et notre gactions
+//                    gactions.put(0, p, k);
+//                }
+//            } //on a notre v et notre gactions
+//        }
+//        */
+//        INDArray newValues = net.output(states.dup().transpose()).transpose();
+//        System.out.println(newValues.shape()[0]);
+//        System.out.println(newValues.shape()[1]);
+//        v.addi(Nd4j.getExecutioner().exec(new Max(newValues.dup()), 0));
+//        gactions.addi(Nd4j.getExecutioner().exec(new IAMax(newValues.dup()), 0));
+
+
+        //todo: c est degueu il faudrait que je mette tout ca dans le constructeur mais deja on va voir si ca marche...
+        int N = states.shape()[1];
+        ArrayList<Attribute> atts = new ArrayList<Attribute>(4);
+        Attribute position = new Attribute("position");
+        Attribute speed= new Attribute("speed");
+        Attribute action= new Attribute("action");
+        Attribute qvalue = new Attribute("qvalue");
+        atts.add(position);
+        atts.add(speed);
+        atts.add(action);
+        atts.add(qvalue);
+        Instances newDataset = new Instances("Dataset", atts, 10);
+        newDataset.setClassIndex(newDataset.numAttributes() - 1);
+
+        double[] oldvalues = new double[3]; //todo: a generaliser
+        int numactions = 3; //todo: automatiser ca0
+
+        for (int p = 0; p<N; p++) {
+            Instance instanceForPrediction = new DenseInstance(4); //todo: automatiser le 2
+            instanceForPrediction.setValue(0, states.getDouble(0, p));
+            instanceForPrediction.setValue(1, states.getDouble(1, p));
+            for (int k = 0; k < numactions; k++) {
+                instanceForPrediction.setValue(2, k);
+                instanceForPrediction.setDataset(newDataset);
+                oldvalues[k] = rf.distributionForInstance(instanceForPrediction)[0]; //attention j ai fait ajouter exception puor method signature
+            }
+            v.put(0,p, getMaxValue(oldvalues));
+
+//
+//            //for debugging:
+//            if(getMaxValue(oldvalues) >= 1){
+//                System.out.println("la valeur est positive ici");
+//            }
+
+            gactions.put(0, p, getMaxIndex(oldvalues));
         }
-        */
-        INDArray newValues = net.output(states.dup().transpose()).transpose();
-        System.out.println(newValues.shape()[0]);
-        System.out.println(newValues.shape()[1]);
-        v.addi(Nd4j.getExecutioner().exec(new Max(newValues.dup()), 0));
-        gactions.addi(Nd4j.getExecutioner().exec(new IAMax(newValues.dup()), 0));
-
 
     }
 
-    public void train_net(int nEpochs, DataSetIterator iterator) {
-        //Train the network on the full data set, and evaluate in periodically
-        for (int i = 0; i < nEpochs; i++) {
-            //iterator.reset(); // todo: voir si je le mets ou pas
-            net.fit(iterator);
+//    public void train_net(int nEpochs, DataSetIterator iterator) {
+//        //Train the network on the full data set, and evaluate in periodically
+//        for (int i = 0; i < nEpochs; i++) {
+//            //iterator.reset(); // todo: voir si je le mets ou pas
+//            net.fit(iterator);
+//        }
+//    }
+
+
+//    private static DataSetIterator getTrainingData(final INDArray x, final INDArray y, final int batchSize, final Random rng) {
+//        final DataSet allData = new DataSet(x,y);
+//        final List<DataSet> list = allData.asList();
+//        Collections.shuffle(list,rng);
+//        return new ListDataSetIterator(list,batchSize);
+//    }
+//
+
+    public static double getMaxValue(double[] array){
+        double maxValue = array[0];
+        for(int i=1;i < array.length;i++){
+            if(array[i] > maxValue){
+                maxValue = array[i];
+
+            }
         }
+        return maxValue;
     }
 
-
-    private static DataSetIterator getTrainingData(final INDArray x, final INDArray y, final int batchSize, final Random rng) {
-        final DataSet allData = new DataSet(x,y);
-        final List<DataSet> list = allData.asList();
-        Collections.shuffle(list,rng);
-        return new ListDataSetIterator(list,batchSize);
+    public static int getMaxIndex(double[] array){
+        double maxValue = array[0];
+        int index = 0;
+        for(int i=1;i < array.length;i++){
+            if(array[i] > maxValue){
+                maxValue = array[i];
+                index = i;
+            }
+        }
+        return index;
     }
+
 
 
 }

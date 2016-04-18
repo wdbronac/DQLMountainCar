@@ -73,29 +73,37 @@ public class Simulation {
     //Number of iterations per minibatch
     public static final int iterations = 1; // avant: 1
     //Number of epochs (full passes of the data)
-    public static final int nEpochs = 2; // avant: 2000
+//<<<<<<< HEAD
+//    public static final int nEpochs = 2; // avant: 2000
+//=======
+    public static final int nEpochs = 2000; // avant: 2000
+//>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
     //How frequently should we plot the network output?
     public static final int plotFrequency = 500;
     //Number of data points
     public static final int nSamples = 1000;
     //Batch size: i.e., each epoch has nSamples/batchSize parameter updates
-    public static final int batchSize = 4096;
+//<<<<<<< HEAD
+//    public static final int batchSize = 4096;
+//=======
+    public static final int batchSize = 10000;
+//>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
     //Network learning rate
-    public static final double learningRate = 0.01;
+    public static final double learningRate = 0.5;
     public static final Random rng = new Random(seed);
     public static final int numInputs = 2;
     public static final int numOutputs = 3;
 
 
     //taille de la dataset qu on genere, voir comment j agence tout ca
-    public static int size_dataset = 100000;
-    public static int num_iterations = 50; // nombre d updates du Q network
+    public static int size_dataset = 30000;
+    public static int num_iterations = 150; // nombre d updates du Q network
 
     //resolution de l image de sortie:
-    public static int resolution = 600;
+    public static int resolution = 60;
 
 
-    public static void main(final String[] args) throws IOException{
+    public static void main(final String[] args) throws Exception {
 
         //Switch these two options to do different functions with different networks
         final MultiLayerConfiguration conf = getDeepDenseLayerNetworkConfiguration();
@@ -104,7 +112,7 @@ public class Simulation {
         final MultiLayerNetwork net = new MultiLayerNetwork(conf);
         net.init();
         net.setListeners(Collections.singletonList((IterationListener) new ScoreIterationListener(1)));
-        //net.setListeners(new HistogramIterationListener(1));
+        net.setListeners(new HistogramIterationListener(1));
 
 
         //generer la dataset
@@ -124,16 +132,19 @@ public class Simulation {
         //on plot la dataset
 
         //pour un certain nombre de pas, faire update
-        double gamma = 0.9;
+        double gamma = 0.99;
         double lrate = 0.1;
         int na = 3;
-        DeepQ Q  = new DeepQ(net, gamma, lrate, na);
+//        DeepQ Q  = new DeepQ(net, gamma, lrate, na);
+            RandFQ  Q = new RandFQ(gamma, lrate, na);
         for (int p = 0; p<num_iterations; p++) {
-            Q.update(states, actions, next_states, rewards, batchSize, rng, nEpochs);//todo: mettre les actions dans gen_dataset
+//            Q.update(states, actions, next_states, rewards,eoes,  batchSize, rng, nEpochs);//todo: mettre les actions dans gen_dataset
+            Q.update(states, actions, next_states, rewards,eoes,  batchSize, rng, nEpochs);//todo: mettre les actions dans gen_dataset
+           //todo: attention j ai fait add exception to method signature ici (ligne du dessus)
             //on plot les Q-values obtenues
             plot_Q(position, velocity, Q, resolution,p );
         }
-
+        //todo: c est cici qu il faut rajouter le randf
 
     }
 
@@ -141,7 +152,11 @@ public class Simulation {
     /** Returns the network configuration, 2 hidden DenseLayers of size 50.
      */
     private static MultiLayerConfiguration getDeepDenseLayerNetworkConfiguration() {
+//<<<<<<< HEAD
+//        final int numHiddenNodes = 6;
+//=======
         final int numHiddenNodes = 6;
+//>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
         return new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .iterations(iterations)
@@ -149,18 +164,36 @@ public class Simulation {
                 .learningRate(learningRate)
                 .weightInit(WeightInit.RELU)
                 .updater(Updater.NESTEROVS).momentum(0.9)
-                .list(4)
+//<<<<<<< HEAD
+//                .list(4)
+//                .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(numHiddenNodes)
+//                        .activation("relu")
+//                        .build())
+//                .layer(1, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+//                        .activation("relu")
+//                        .build())
+//                .layer(2, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+//                        .activation("relu")
+//                        .build())
+//                .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
+//                        .activation("identity")
+//=======
+                .list(5)
                 .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(numHiddenNodes)
                         .activation("relu")
                         .build())
-                .layer(1, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
-                        .activation("relu")
-                        .build())
+               .layer(1, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+                       .activation("relu")
+                       .build())
                 .layer(2, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
                         .activation("relu")
                         .build())
-                .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
+                .layer(3, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+                        .activation("relu")
+                        .build())
+                .layer(4, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
                         .activation("identity")
+//>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
                         .nIn(numHiddenNodes).nOut(numOutputs).build())
                 .pretrain(false).backprop(true).build();
     }
@@ -238,6 +271,8 @@ public class Simulation {
         System.out.println("Computing the results of the Q value...");
         INDArray result = deepQ.net.output(matrix_tot.transpose()).transpose(); //todo: voir si il faut pas faire des iterateurs
         INDArray image_greedy_policy = Nd4j.getExecutioner().exec(new IAMax(result.dup()), 0);
+        //todo: changer pour mettre ici le randf
+
         image_greedy_policy = image_greedy_policy.reshape(resolution, resolution);
         System.out.println("Result computed.");
         String outputFile = System.getProperty("user.dir")+"/images/imagePolicy"+i+".png";
@@ -249,6 +284,53 @@ public class Simulation {
         System.out.println("Computing the results of the Q value...");
         INDArray image_Qvalue = Nd4j.getExecutioner().exec(new Max(result.dup()), 0); //todo: voir si je m en foutrais pas du dup
         image_Qvalue =image_Qvalue.reshape(resolution, resolution);
+        //todo: changer pour mettre ici le randf
+
+
+        System.out.println("Result computed.");
+        String outputFile2 = System.getProperty("user.dir")+"/images/imageValue"+i+".png";
+        ImageRender.render(image_Qvalue, outputFile2);
+        System.out.println("Image Created.");
+
+    }
+
+
+    private static void plot_Q(double [] position, double[] velocity, RandFQ rfQ, int resolution, int i ) throws Exception {
+        System.out.println("Creating the image...");
+        //verifier parce que je vais avoir un max de pbs avec la shape...
+        //building the matrix for plotting
+        double coeff_pos = position[1]-position[0];
+        double ori_pos = position[0];
+        double coeff_velo = velocity[1]-velocity[0];
+        double ori_velo = velocity[0];
+        //petite boucle en attendant de trouver mieux
+        INDArray matrix_tot = Nd4j.zeros(2, resolution*resolution); //todo: attention je sais pas si le carre ca marche
+        for (int p = 0; p<resolution; p++) {
+            for (int m = 0; m < resolution; m++){
+                matrix_tot.put(0, resolution*p+m, p*(coeff_pos)/resolution+ori_pos);
+                matrix_tot.put(1, resolution*p+m, m*(coeff_velo)/resolution+ori_velo);
+            }
+        }
+
+        System.out.println("Computing the results of the Q value...");
+        INDArray image_greedy_policy = Nd4j.zeros(1, resolution*resolution);
+        INDArray image_Qvalue = Nd4j.zeros(1, resolution*resolution);
+        rfQ.predict(matrix_tot, image_Qvalue, image_greedy_policy); //todo: voir si il faut pas faire des iterateurs
+        //todo: changer pour mettre ici le randf
+
+        image_greedy_policy = image_greedy_policy.reshape(resolution, resolution); //todo see if tranqpose is needed
+        System.out.println("Result computed.");
+        String outputFile = System.getProperty("user.dir")+"/images/imagePolicy"+i+".png";
+        ImageRender.render(image_greedy_policy, outputFile);
+        System.out.println("Image Created.");
+
+
+
+        System.out.println("Computing the results of the Q value...");
+        image_Qvalue =image_Qvalue.reshape(resolution, resolution);
+        //todo: changer pour mettre ici le randf
+
+
         System.out.println("Result computed.");
         String outputFile2 = System.getProperty("user.dir")+"/images/imageValue"+i+".png";
         ImageRender.render(image_Qvalue, outputFile2);

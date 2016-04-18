@@ -33,7 +33,7 @@ public class DeepQ {
 
 
     public void update(INDArray states_input, INDArray actions,
-                  INDArray next_states, INDArray rewards,
+                  INDArray next_states, INDArray rewards, INDArray eoes,
                   int batchSize, Random rng , int nEpochs){ //update le reseau avec les inputs donnes,
                     // et les actions suivantes possibles (fait un fitting)
         // c est la grosse fonction du programme
@@ -43,7 +43,11 @@ public class DeepQ {
         INDArray bestnextvalues = Nd4j.zeros(1,N);//le max selon toutes les values de next_state
         INDArray gactions =  Nd4j.zeros(1,N);
         this.predict(next_states, bestnextvalues, gactions) ; // il y a un pb a regler avec l action
-        INDArray betterQvalues = rewards.add(bestnextvalues.dup().mul(gamma)); //todo: verifier s il y a bien une copie
+        INDArray betterQvalues = rewards.dup().add(bestnextvalues.dup().mul(- gamma).muli(eoes.dup().sub(1))); //todo: verifier s il y a bien une copie
+
+        //todo: c est une maniere de prendre en compte les eoes mais je sais pas si ca marche
+        //todo: pas forcement besoin de reward.dup()
+
 
         //INDArray betterQvalues  = this.net.output(next_states); //todo: voir pcq il y a un pb avec
         // les actions
@@ -61,8 +65,10 @@ public class DeepQ {
             int index_action = (int) actions.getDouble(0,k);
             System.out.println(index_action);
             newQvalues.put(index_action, k ,oldQvalues.getDouble(index_action, k) + betterQvalues.getDouble(0, k)
-                    - oldQvalues.getDouble(index_action, k) * lrate);
+                    - oldQvalues.getDouble(index_action, k) * lrate); //todo: simplify, and take in account eoes
         }
+
+        //TODO absolument !!!
         //TODO: faire en sorte de regler quand on donne la reward
         System.out.println(oldQvalues.shape()[0]);
         System.out.println(oldQvalues.shape()[1]);
