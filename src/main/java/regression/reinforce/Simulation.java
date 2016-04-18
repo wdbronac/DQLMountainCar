@@ -71,7 +71,7 @@ public class Simulation {
     //Random number generator seed, for reproducability
     public static final int seed = 12345;
     //Number of iterations per minibatch
-    public static final int iterations = 1; // avant: 1
+    public static final int iterations = 4; // avant: 1
     //Number of epochs (full passes of the data)
 //<<<<<<< HEAD
 //    public static final int nEpochs = 2; // avant: 2000
@@ -86,10 +86,10 @@ public class Simulation {
 //<<<<<<< HEAD
 //    public static final int batchSize = 4096;
 //=======
-    public static final int batchSize = 10000;
+    public static final int batchSize = 30000;
 //>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
     //Network learning rate
-    public static final double learningRate = 0.5;
+    public static final double learningRate = 0.01;
     public static final Random rng = new Random(seed);
     public static final int numInputs = 2;
     public static final int numOutputs = 3;
@@ -104,7 +104,8 @@ public class Simulation {
 
 
     public static void main(final String[] args) throws Exception {
-
+        String type = "MLP";
+        //String type  = "RF";
         //Switch these two options to do different functions with different networks
         final MultiLayerConfiguration conf = getDeepDenseLayerNetworkConfiguration();
 
@@ -133,10 +134,14 @@ public class Simulation {
 
         //pour un certain nombre de pas, faire update
         double gamma = 0.99;
-        double lrate = 0.1;
+        double lrate = 1;
         int na = 3;
-//        DeepQ Q  = new DeepQ(net, gamma, lrate, na);
-            RandFQ  Q = new RandFQ(gamma, lrate, na);
+
+
+        DeepQ Q = new DeepQ(net, gamma, lrate, na);
+
+//                RandFQ Q = new RandFQ(gamma, lrate, na); //todo: switch
+
         for (int p = 0; p<num_iterations; p++) {
 //            Q.update(states, actions, next_states, rewards,eoes,  batchSize, rng, nEpochs);//todo: mettre les actions dans gen_dataset
             Q.update(states, actions, next_states, rewards,eoes,  batchSize, rng, nEpochs);//todo: mettre les actions dans gen_dataset
@@ -178,7 +183,7 @@ public class Simulation {
 //                .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
 //                        .activation("identity")
 //=======
-                .list(5)
+                .list(4)
                 .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(numHiddenNodes)
                         .activation("relu")
                         .build())
@@ -188,10 +193,10 @@ public class Simulation {
                 .layer(2, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
                         .activation("relu")
                         .build())
-                .layer(3, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
-                        .activation("relu")
-                        .build())
-                .layer(4, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
+//                .layer(3, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+//                        .activation("relu")
+//                        .build())
+                .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
                         .activation("identity")
 //>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
                         .nIn(numHiddenNodes).nOut(numOutputs).build())
@@ -264,8 +269,8 @@ public class Simulation {
         INDArray matrix_tot = Nd4j.zeros(2, resolution*resolution); //todo: attention je sais pas si le carre ca marche
         for (int p = 0; p<resolution; p++) {
             for (int m = 0; m < resolution; m++){
-                matrix_tot.put(0, resolution*p+m, p*(coeff_pos)+ori_pos);
-                matrix_tot.put(1, resolution*p+m, m*(coeff_velo)+ori_velo);
+                matrix_tot.put(0, resolution*p+m, p*(coeff_pos)/resolution+ori_pos);
+                matrix_tot.put(1, resolution*p+m, m*(coeff_velo)/resolution+ori_velo);
             }
         }
         System.out.println("Computing the results of the Q value...");
@@ -291,6 +296,9 @@ public class Simulation {
         String outputFile2 = System.getProperty("user.dir")+"/images/imageValue"+i+".png";
         ImageRender.render(image_Qvalue, outputFile2);
         System.out.println("Image Created.");
+
+
+        //todo: ici, plutot utiliser la methode predict c est pplus simple
 
     }
 
