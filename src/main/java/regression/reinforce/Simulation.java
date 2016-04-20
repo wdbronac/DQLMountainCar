@@ -71,7 +71,7 @@ public class Simulation {
     //Random number generator seed, for reproducability
     public static final int seed = 12345;
     //Number of iterations per minibatch
-    public static final int iterations = 500; // avant: 1
+    public static final int iterations = 2000; // avant: 1
     //Number of epochs (full passes of the data)
 //<<<<<<< HEAD
 //    public static final int nEpochs = 2; // avant: 2000
@@ -86,17 +86,17 @@ public class Simulation {
 //<<<<<<< HEAD
 //    public static final int batchSize = 4096;
 //=======
-    public static final int batchSize = 3000;
+    public static final int batchSize = 30000;
 //>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
     //Network learning rate
-    public static final double learningRate = 0.01;
+    public static final double learningRate = 0.2;
     public static final Random rng = new Random(seed);
     public static final int numInputs = 2;
     public static final int numOutputs = 3;
 
 
     //taille de la dataset qu on genere, voir comment j agence tout ca
-    public static int size_dataset = 100;
+    public static int size_dataset = 30000;
     public static int num_iterations = 150; // nombre d updates du Q network
 
     //resolution de l image de sortie:
@@ -147,6 +147,7 @@ public class Simulation {
             System.out.println("Iteration " + p + " on " + num_iterations);
 //            Q.update(states, actions, next_states, rewards,eoes,  batchSize, rng, nEpochs);//todo: mettre les actions dans gen_dataset
             Q.update(states, actions, next_states, rewards,eoes,  batchSize, rng, nEpochs);//todo: mettre les actions dans gen_dataset
+//            Q.update(states, actions, next_states, rewards,eoes,  batchSize, rng, nEpochs);//todo: mettre les actions dans gen_dataset
            //todo: attention j ai fait add exception to method signature ici (ligne du dessus)
             //on plot les Q-values obtenues
             plot_Q(position, velocity, Q, resolution,p );
@@ -162,7 +163,7 @@ public class Simulation {
 //<<<<<<< HEAD
 //        final int numHiddenNodes = 6;
 //=======
-        final int numHiddenNodes = 8;
+        final int numHiddenNodes = 16;
 //>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
         return new NeuralNetConfiguration.Builder()
                 .seed(seed)
@@ -171,7 +172,7 @@ public class Simulation {
 //                .optimizationAlgo(OptimizationAlgorithm.LBFGS)
                 .learningRate(learningRate)
                 .updater(Updater.NESTEROVS).momentum(0.9)
-                .list(5)
+                .list(6)
                 .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(numHiddenNodes)
                         .activation("relu")
                         .weightInit(WeightInit.RELU)
@@ -188,7 +189,11 @@ public class Simulation {
                         .activation("relu")
                         .weightInit(WeightInit.RELU)
                         .build())
-                .layer(4, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
+                .layer(4, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+                        .activation("relu")
+                        .weightInit(WeightInit.RELU)
+                        .build())
+                .layer(5, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
                         .activation("identity")
                         .weightInit(WeightInit.ZERO)
                         .nIn(numHiddenNodes).nOut(numOutputs).build())
