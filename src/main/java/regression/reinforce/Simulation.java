@@ -71,12 +71,12 @@ public class Simulation {
     //Random number generator seed, for reproducability
     public static final int seed = 12345;
     //Number of iterations per minibatch
-    public static final int iterations = 4; // avant: 1
+    public static final int iterations = 1000; // avant: 1
     //Number of epochs (full passes of the data)
 //<<<<<<< HEAD
 //    public static final int nEpochs = 2; // avant: 2000
 //=======
-    public static final int nEpochs = 2000; // avant: 2000
+    public static final int nEpochs = 1; // avant: 2000
 //>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
     //How frequently should we plot the network output?
     public static final int plotFrequency = 500;
@@ -138,11 +138,13 @@ public class Simulation {
         int na = 3;
 
 
-        DeepQ Q = new DeepQ(net, gamma, lrate, na);
+        DeepQ Q = new DeepQ(net, gamma, lrate, na, position, velocity);
 
 //                RandFQ Q = new RandFQ(gamma, lrate, na); //todo: switch
-
+//
         for (int p = 0; p<num_iterations; p++) {
+
+            System.out.println("Iteration " + p + " on " + num_iterations);
 //            Q.update(states, actions, next_states, rewards,eoes,  batchSize, rng, nEpochs);//todo: mettre les actions dans gen_dataset
             Q.update(states, actions, next_states, rewards,eoes,  batchSize, rng, nEpochs);//todo: mettre les actions dans gen_dataset
            //todo: attention j ai fait add exception to method signature ici (ligne du dessus)
@@ -160,45 +162,35 @@ public class Simulation {
 //<<<<<<< HEAD
 //        final int numHiddenNodes = 6;
 //=======
-        final int numHiddenNodes = 6;
+        final int numHiddenNodes = 8;
 //>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
         return new NeuralNetConfiguration.Builder()
                 .seed(seed)
                 .iterations(iterations)
                 .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+//                .optimizationAlgo(OptimizationAlgorithm.LBFGS)
                 .learningRate(learningRate)
-                .weightInit(WeightInit.RELU)
                 .updater(Updater.NESTEROVS).momentum(0.9)
-//<<<<<<< HEAD
-//                .list(4)
-//                .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(numHiddenNodes)
-//                        .activation("relu")
-//                        .build())
-//                .layer(1, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
-//                        .activation("relu")
-//                        .build())
-//                .layer(2, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
-//                        .activation("relu")
-//                        .build())
-//                .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
-//                        .activation("identity")
-//=======
-                .list(4)
+                .list(5)
                 .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(numHiddenNodes)
                         .activation("relu")
+                        .weightInit(WeightInit.RELU)
                         .build())
                .layer(1, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
                        .activation("relu")
+                       .weightInit(WeightInit.RELU)
                        .build())
                 .layer(2, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
                         .activation("relu")
+                        .weightInit(WeightInit.RELU)
                         .build())
-//                .layer(3, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
-//                        .activation("relu")
-//                        .build())
-                .layer(3, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
+                .layer(3, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+                        .activation("relu")
+                        .weightInit(WeightInit.RELU)
+                        .build())
+                .layer(4, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
                         .activation("identity")
-//>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
+                        .weightInit(WeightInit.ZERO)
                         .nIn(numHiddenNodes).nOut(numOutputs).build())
                 .pretrain(false).backprop(true).build();
     }
@@ -274,8 +266,11 @@ public class Simulation {
             }
         }
         System.out.println("Computing the results of the Q value...");
-        INDArray result = deepQ.net.output(matrix_tot.transpose()).transpose(); //todo: voir si il faut pas faire des iterateurs
+        INDArray result = deepQ.net.output(deepQ.normalize(matrix_tot.transpose())).transpose(); //todo: voir si il faut pas faire des iterateurs
+        //attention c est la que je normalise mes inputs
         INDArray image_greedy_policy = Nd4j.getExecutioner().exec(new IAMax(result.dup()), 0);
+        image_greedy_policy = image_greedy_policy.subi(image_greedy_policy.minNumber());
+        image_greedy_policy = image_greedy_policy.divi(image_greedy_policy.maxNumber());
         //todo: changer pour mettre ici le randf
 
         image_greedy_policy = image_greedy_policy.reshape(resolution, resolution);
@@ -288,6 +283,8 @@ public class Simulation {
 
         System.out.println("Computing the results of the Q value...");
         INDArray image_Qvalue = Nd4j.getExecutioner().exec(new Max(result.dup()), 0); //todo: voir si je m en foutrais pas du dup
+        image_Qvalue = image_Qvalue.subi(image_Qvalue.minNumber());
+        image_Qvalue = image_Qvalue.divi(image_Qvalue.maxNumber());
         image_Qvalue =image_Qvalue.reshape(resolution, resolution);
         //todo: changer pour mettre ici le randf
 
@@ -312,11 +309,13 @@ public class Simulation {
         double coeff_velo = velocity[1]-velocity[0];
         double ori_velo = velocity[0];
         //petite boucle en attendant de trouver mieux
+
+
         INDArray matrix_tot = Nd4j.zeros(2, resolution*resolution); //todo: attention je sais pas si le carre ca marche
         for (int p = 0; p<resolution; p++) {
             for (int m = 0; m < resolution; m++){
-                matrix_tot.put(0, resolution*p+m, p*(coeff_pos)/resolution+ori_pos);
-                matrix_tot.put(1, resolution*p+m, m*(coeff_velo)/resolution+ori_velo);
+                matrix_tot.put(0, resolution*p+m, p*(coeff_pos)/(double)resolution+ori_pos);
+                matrix_tot.put(1, resolution*p+m, m*(coeff_velo)/(double)resolution+ori_velo);
             }
         }
 
@@ -326,6 +325,8 @@ public class Simulation {
         rfQ.predict(matrix_tot, image_Qvalue, image_greedy_policy); //todo: voir si il faut pas faire des iterateurs
         //todo: changer pour mettre ici le randf
 
+        image_greedy_policy = image_greedy_policy.subi(image_greedy_policy.minNumber());
+        image_greedy_policy = image_greedy_policy.divi(image_greedy_policy.maxNumber());
         image_greedy_policy = image_greedy_policy.reshape(resolution, resolution); //todo see if tranqpose is needed
         System.out.println("Result computed.");
         String outputFile = System.getProperty("user.dir")+"/images/imagePolicy"+i+".png";
@@ -335,6 +336,8 @@ public class Simulation {
 
 
         System.out.println("Computing the results of the Q value...");
+        image_Qvalue = image_Qvalue.subi(image_Qvalue.minNumber());
+        image_Qvalue = image_Qvalue.divi(image_Qvalue.maxNumber());
         image_Qvalue =image_Qvalue.reshape(resolution, resolution);
         //todo: changer pour mettre ici le randf
 
@@ -342,6 +345,10 @@ public class Simulation {
         System.out.println("Result computed.");
         String outputFile2 = System.getProperty("user.dir")+"/images/imageValue"+i+".png";
         ImageRender.render(image_Qvalue, outputFile2);
+        System.out.println("image_Qvalue[0][0] = " + image_Qvalue.getDouble(0,0));
+        System.out.println("image_Qvalue[0][resolution-1] = " + image_Qvalue.getDouble(0,resolution-1));
+        System.out.println("image_Qvalue[resolution-1][resolution-1] = " + image_Qvalue.getDouble(resolution-1,resolution-1));
+        System.out.println("image_Qvalue[resolution-1][0] = " + image_Qvalue.getDouble(resolution-1,0));
         System.out.println("Image Created.");
 
     }
@@ -386,72 +393,72 @@ public class Simulation {
      * @param dataset  the dataset.
      *
      * @return A sample chart.
-     */
-    private static JFreeChart createChart(VectorXYDataset dataset) {
-
-        //todo: rajouter un truc pour mettre de couleurs differentes les differents graphes
-        // todo : il y a surement plein de parametres a changer
-
-        NumberAxis xAxis = new NumberAxis("X");
-        xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        xAxis.setLowerMargin(0.01);
-        xAxis.setUpperMargin(0.01);
-        xAxis.setAutoRangeIncludesZero(false);
-
-        NumberAxis yAxis = new NumberAxis("Y");
-        yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
-        yAxis.setLowerMargin(0.01);
-        yAxis.setUpperMargin(0.01);
-        yAxis.setAutoRangeIncludesZero(false);
-        VectorRenderer renderer = new VectorRenderer();
-        renderer.setSeriesPaint(0, Color.blue);
-        XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
-        plot.setBackgroundPaint(Color.lightGray);
-        plot.setDomainGridlinePaint(Color.white);
-        plot.setRangeGridlinePaint(Color.white);
-        plot.setAxisOffset(new RectangleInsets(5, 5, 5, 5));
-        plot.setOutlinePaint(Color.black);
-        JFreeChart chart = new JFreeChart("Vector Plot Demo 1", plot);
-        chart.setBackgroundPaint(Color.white);
-        return chart;
-    }
-
-    /**
-     * Creates a sample dataset.
-     */
-    private static VectorXYDataset createDataset(INDArray states, INDArray actions, INDArray next_states) {
-        //pour chaque action
-        int N = states.shape()[1];
-        VectorSeriesCollection dataset = new VectorSeriesCollection();
-        //pour commencer on fait simple: je sais qu il n y a que 3 actions. todo: generaliser
-        //todo: truc pas terrible: mon sens d orientation des colonnes n est vraiment pas terrible
-        for (int k = 0; k<N; k++) {
-            /*
-            System.out.println(actions.shape()[1]);
-            System.out.println(k);
-            */
-            double current_action = actions.getDouble(0, k); //on peut ptetre enlever le 1
-            VectorSeries s1 = new VectorSeries("Action 1");
-            VectorSeries s2 = new VectorSeries("Action 2");
-            VectorSeries s3 = new VectorSeries("Action 3");
-            double x_or = states.getDouble(0, k);
-            double y_or  =  states.getDouble(1,k);
-            double x_add = next_states.getDouble(0, k) - x_or;
-            double y_add = next_states.getDouble(1, k) - y_or;
-            switch ((int) current_action){
-                case 0: s1.add(x_or, y_or, x_add, y_add);
-                    break; //todo: verif si on en a bien besoin
-                case 1: s2.add(x_or, y_or, x_add, y_add);
-                    break;
-                case 2: s3.add(x_or, y_or, x_add, y_add);
-                    break;
-            }
-            dataset.addSeries(s1);
-            dataset.addSeries(s2);
-            dataset.addSeries(s3);
-        }
-        return dataset;
-    }
+//     */
+//    private static JFreeChart createChart(VectorXYDataset dataset) {
+//
+//        //todo: rajouter un truc pour mettre de couleurs differentes les differents graphes
+//        // todo : il y a surement plein de parametres a changer
+//
+//        NumberAxis xAxis = new NumberAxis("X");
+//        xAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+//        xAxis.setLowerMargin(0.01);
+//        xAxis.setUpperMargin(0.01);
+//        xAxis.setAutoRangeIncludesZero(false);
+//
+//        NumberAxis yAxis = new NumberAxis("Y");
+//        yAxis.setStandardTickUnits(NumberAxis.createIntegerTickUnits());
+//        yAxis.setLowerMargin(0.01);
+//        yAxis.setUpperMargin(0.01);
+//        yAxis.setAutoRangeIncludesZero(false);
+//        VectorRenderer renderer = new VectorRenderer();
+//        renderer.setSeriesPaint(0, Color.blue);
+//        XYPlot plot = new XYPlot(dataset, xAxis, yAxis, renderer);
+//        plot.setBackgroundPaint(Color.lightGray);
+//        plot.setDomainGridlinePaint(Color.white);
+//        plot.setRangeGridlinePaint(Color.white);
+//        plot.setAxisOffset(new RectangleInsets(5, 5, 5, 5));
+//        plot.setOutlinePaint(Color.black);
+//        JFreeChart chart = new JFreeChart("Vector Plot Demo 1", plot);
+//        chart.setBackgroundPaint(Color.white);
+//        return chart;
+//    }
+//
+//    /**
+//     * Creates a sample dataset.
+//     */
+//    private static VectorXYDataset createDataset(INDArray states, INDArray actions, INDArray next_states) {
+//        //pour chaque action
+//        int N = states.shape()[1];
+//        VectorSeriesCollection dataset = new VectorSeriesCollection();
+//        //pour commencer on fait simple: je sais qu il n y a que 3 actions. todo: generaliser
+//        //todo: truc pas terrible: mon sens d orientation des colonnes n est vraiment pas terrible
+//        for (int k = 0; k<N; k++) {
+//            /*
+//            System.out.println(actions.shape()[1]);
+//            System.out.println(k);
+//            */
+//            double current_action = actions.getDouble(0, k); //on peut ptetre enlever le 1
+//            VectorSeries s1 = new VectorSeries("Action 1");
+//            VectorSeries s2 = new VectorSeries("Action 2");
+//            VectorSeries s3 = new VectorSeries("Action 3");
+//            double x_or = states.getDouble(0, k);
+//            double y_or  =  states.getDouble(1,k);
+//            double x_add = next_states.getDouble(0, k) - x_or;
+//            double y_add = next_states.getDouble(1, k) - y_or;
+//            switch ((int) current_action){
+//                case 0: s1.add(x_or, y_or, x_add, y_add);
+//                    break; //todo: verif si on en a bien besoin
+//                case 1: s2.add(x_or, y_or, x_add, y_add);
+//                    break;
+//                case 2: s3.add(x_or, y_or, x_add, y_add);
+//                    break;
+//            }
+//            dataset.addSeries(s1);
+//            dataset.addSeries(s2);
+//            dataset.addSeries(s3);
+//        }
+//        return dataset;
+//    }
 
 
 }

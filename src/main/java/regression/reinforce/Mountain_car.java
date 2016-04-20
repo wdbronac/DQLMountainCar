@@ -40,12 +40,14 @@ public class Mountain_car {
         next_state.putRow(0, state.getRow(0).dup().addi(next_state.getRow(1).dup()));
         for (int i = 0; i < state.shape()[1]; i++) {
             if (next_state.getDouble(0,i) > this.position[1]) {
-                r.put(0, i, 10);
+                r.put(0, i, 1);
+//                r.put(0, i, 10);
                 eoe.put(0,i, 1);
             }
             if (next_state.getDouble(0,i) < this.position[0]) {
                 next_state.put(1, i, 0);
-                r.put(0,i,-10);
+                r.put(0,i,-1);
+//                r.put(0,i,-10);
             }
         }
         // je l ai fait avec un test de merde mais voir comment utiliser la fonction max

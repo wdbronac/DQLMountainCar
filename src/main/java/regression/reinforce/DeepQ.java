@@ -23,12 +23,17 @@ public class DeepQ {
     public double gamma;
     public double lrate;
     public int na;
+    public double[] position;
+    public double[] velocity;
+    public int t=0;
 
-    public DeepQ(MultiLayerNetwork net, double gamma, double lrate, int na) {
+    public DeepQ(MultiLayerNetwork net, double gamma, double lrate, int na, double[] position, double[] velocity) {
         this.net = net;
         this.gamma = gamma;
         this.lrate = lrate;
         this.na = na;
+        this.position = position;
+        this.velocity = velocity;
     }
 
 
@@ -37,13 +42,18 @@ public class DeepQ {
                   int batchSize, Random rng , int nEpochs){ //update le reseau avec les inputs donnes,
                     // et les actions suivantes possibles (fait un fitting)
         // c est la grosse fonction du programme
-        INDArray states_input_copy = states_input.dup().transpose();
+        INDArray states_input_copy = normalize(states_input.dup().transpose());
         int N = states_input_copy.shape()[0];
-        INDArray oldQvalues = this.net.output(states_input_copy).transpose();
         INDArray bestnextvalues = Nd4j.zeros(1,N);//le max selon toutes les values de next_state
         INDArray gactions =  Nd4j.zeros(1,N);
-        this.predict(next_states, bestnextvalues, gactions) ; // il y a un pb a regler avec l action
-        INDArray betterQvalues = rewards.dup().add(bestnextvalues.dup().mul(- gamma).muli(eoes.dup().sub(1))); //todo: verifier s il y a bien une copie
+        INDArray betterQvalues;
+        if (t==0){
+            betterQvalues = rewards.dup();
+        }
+        else {
+            this.predict(normalize(next_states), bestnextvalues, gactions); // il y a un pb a regler avec l action
+            betterQvalues = rewards.dup().add(bestnextvalues.dup().mul(- gamma).muli(eoes.dup().sub(1))); //todo: verifier s il y a bien une copie
+        }
 
         //todo: c est une maniere de prendre en compte les eoes mais je sais pas si ca marche
         //todo: pas forcement besoin de reward.dup()
@@ -55,28 +65,65 @@ public class DeepQ {
         il y a beaucoup trop de Qold dans l affaire ca peut se simplifier mais pour l instant on laisse
         */
         //todo: aussi il faut que je change tous les tableaux en nd4j je pense
+
+        //calculer une bonne fois pour toutes le tableau, si lrate ==1
+        INDArray qValueToPut = Nd4j.zeros(1, N);
+        if(lrate ==1) {
+            for (int k = 0; k < N; k++) { //parcourir chaque transition
+                int index_action = (int) actions.getDouble(0, k);
+                qValueToPut.put(0,k,betterQvalues.getDouble(0, k));
+            }
+        }
+
+        for (int i = 0; i < nEpochs; i++) {
+
+        INDArray oldQvalues = this.net.output(states_input_copy).transpose();
         INDArray newQvalues = oldQvalues.dup();
-        System.out.println(states_input_copy.shape()[0]);
-        System.out.println(states_input_copy.shape()[1]);
-        System.out.println(oldQvalues.shape()[0]);
-        System.out.println(oldQvalues.shape()[1]);
-        //todo: if ( c est l action choisie):
+               //todo: if ( c est l action choisie):
+
+
         for (int k = 0; k<N; k++) { //parcourir chaque transition
-            int index_action = (int) actions.getDouble(0,k);
-            System.out.println(index_action);
-            newQvalues.put(index_action, k ,oldQvalues.getDouble(index_action, k) + betterQvalues.getDouble(0, k)
-                    - oldQvalues.getDouble(index_action, k) * lrate); //todo: simplify, and take in account eoes
+            int index_action = (int) actions.getDouble(0, k);
+            if( lrate != 1){
+            qValueToPut.put(0,k,oldQvalues.getDouble(index_action, k) + betterQvalues.getDouble(0, k)
+                    - oldQvalues.getDouble(index_action, k) * lrate);
+            }
+            newQvalues.put(index_action, k, qValueToPut.getDouble(0,k)); //todo: simplify, and take in account eoes
         }
 
         //TODO absolument !!!
         //TODO: faire en sorte de regler quand on donne la reward
-        System.out.println(oldQvalues.shape()[0]);
-        System.out.println(oldQvalues.shape()[1]);
-        System.out.println(newQvalues.shape()[0]);
-        System.out.println(newQvalues.shape()[1]);
-        final DataSetIterator iterator = getTrainingData(states_input_copy,newQvalues.transpose(), batchSize,rng);
-        train_net(nEpochs,  iterator);
+//        System.out.println(oldQvalues.shape()[0]);
+//        System.out.println(oldQvalues.shape()[1]);
+//        System.out.println(newQvalues.shape()[0]);
+//        System.out.println(newQvalues.shape()[1]);
 
+            //iterator.reset(); // todo: voir si je le mets ou pas
+
+            System.out.println("Prining states some input");
+            for(int co =0; co<N; co++){
+                double posit= states_input_copy.getDouble(co, 0);
+                double veloc= states_input_copy.getDouble(co, 1);
+                if (Math.abs(posit )>1 || Math.abs(veloc )>1){
+                    System.out.println("veloc = " + veloc);
+                    System.out.println("posit = " + posit);
+                }
+            }
+            System.out.println("Printing some newQvalues");
+            for(int co =0; co<N; co++){
+                double newq = newQvalues.getDouble(1, co);
+                if (Math.abs(newq)> 1){
+                    System.out.println("newq = " + newq);
+                }
+            }
+
+
+
+            DataSetIterator iterator = getTrainingData(states_input_copy,newQvalues.transpose(), batchSize,rng);
+
+            net.fit(iterator);
+        }
+        t++;
 
     }
 
@@ -107,11 +154,16 @@ public class DeepQ {
             } //on a notre v et notre gactions
         }
         */
-        INDArray newValues = net.output(states.dup().transpose()).transpose();
+
+        /*
+        WARNING: the input should be normalized
+        */
+        INDArray newValues = net.output(states.dup().transpose()).transpose(); //verif shape
         System.out.println(newValues.shape()[0]);
         System.out.println(newValues.shape()[1]);
-        v.addi(Nd4j.getExecutioner().exec(new Max(newValues.dup()), 0));
-        gactions.addi(Nd4j.getExecutioner().exec(new IAMax(newValues.dup()), 0));
+
+        v.putRow(0,Nd4j.getExecutioner().exec(new Max(newValues.dup()), 0));
+        gactions.putRow(0,Nd4j.getExecutioner().exec(new IAMax(newValues.dup()), 0));
 
 
     }
@@ -132,5 +184,13 @@ public class DeepQ {
         return new ListDataSetIterator(list,batchSize);
     }
 
+
+
+    public INDArray normalize(INDArray states_input){ //le INDArray doit etre oriente en vertical
+        INDArray state = states_input.dup();
+        state.getColumn(0).subi(position[0]).divi(position[1]-position[0]);
+        state.getColumn(1).subi(velocity[0]).divi(velocity[1]-velocity[0]);
+        return state;
+    }
 
 }

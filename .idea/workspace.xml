@@ -9,9 +9,16 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/image3.png" afterPath="$PROJECT_DIR$/images/image3.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/image4.png" afterPath="$PROJECT_DIR$/images/image4.png" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/image5.png" afterPath="$PROJECT_DIR$/images/image5.png" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/regression/reinforce/DeepQ.class" afterPath="$PROJECT_DIR$/target/classes/regression/reinforce/DeepQ.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/regression/reinforce/Mountain_car.class" afterPath="$PROJECT_DIR$/target/classes/regression/reinforce/Mountain_car.class" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/regression/reinforce/RandFQ.class" afterPath="$PROJECT_DIR$/target/classes/regression/reinforce/RandFQ.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/target/classes/regression/reinforce/Simulation.class" afterPath="$PROJECT_DIR$/target/classes/regression/reinforce/Simulation.class" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/images/dataset.csv" afterPath="$PROJECT_DIR$/images/dataset.csv" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/pythonScripts/Untitled.ipynb" afterPath="$PROJECT_DIR$/pythonScripts/Untitled.ipynb" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/regression/reinforce/DeepQ.java" afterPath="$PROJECT_DIR$/src/main/java/regression/reinforce/DeepQ.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/regression/reinforce/Mountain_car.java" afterPath="$PROJECT_DIR$/src/main/java/regression/reinforce/Mountain_car.java" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/regression/reinforce/RandFQ.java" afterPath="$PROJECT_DIR$/src/main/java/regression/reinforce/RandFQ.java" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/main/java/regression/reinforce/Simulation.java" afterPath="$PROJECT_DIR$/src/main/java/regression/reinforce/Simulation.java" />
     </list>
     <ignored path="tests_divers.iws" />
@@ -39,51 +46,23 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="DeepQ.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/regression/reinforce/DeepQ.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="150">
-              <caret line="23" column="23" selection-start-line="23" selection-start-column="18" selection-end-line="23" selection-end-column="23" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="RandFQ.java" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/main/java/regression/reinforce/RandFQ.java">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="555">
-              <caret line="49" column="0" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
-              <folding>
-                <element signature="imports" expanded="true" />
-                <element signature="e#2062#2073#0" expanded="true" />
-                <element signature="e#4947#5073#0" expanded="false" />
-                <element signature="e#12533#12544#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="pom.xml" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/pom.xml">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="22" column="17" selection-start-line="22" selection-start-column="17" selection-end-line="22" selection-end-column="17" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Simulation.java" pinned="false" current-in-tab="true">
+      <file leaf-file-name="Simulation.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/regression/reinforce/Simulation.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="490">
-              <caret line="91" column="50" selection-start-line="91" selection-start-column="50" selection-end-line="91" selection-end-column="50" />
+            <state relative-caret-position="165">
+              <caret line="173" column="23" selection-start-line="173" selection-start-column="23" selection-end-line="173" selection-end-column="23" />
               <folding>
-                <element signature="e#6863#6877#0" expanded="false" />
-                <marker date="1460998281440" expanded="true" signature="8455:8589" placeholder="{...}" />
+                <element signature="imports" expanded="true" />
+                <marker date="1461166033829" expanded="true" signature="8073:8206" placeholder="{...}" />
               </folding>
             </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="imageValue0.png" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/images/imageValue0.png">
+          <provider selected="true" editor-type-id="images">
+            <state />
           </provider>
         </entry>
       </file>
@@ -114,10 +93,10 @@
         <option value="$PROJECT_DIR$/pythonScripts/plot_dataset.py" />
         <option value="$PROJECT_DIR$/pythonScripts/plot_tools.py" />
         <option value="$PROJECT_DIR$/src/main/java/regression/reinforce/Mountain_carTest.groovy" />
-        <option value="$PROJECT_DIR$/src/main/java/regression/reinforce/Mountain_car.java" />
         <option value="$PROJECT_DIR$/src/main/java/regression/RegressionMathFunctions.java" />
-        <option value="$PROJECT_DIR$/src/main/java/regression/reinforce/DeepQ.java" />
         <option value="$PROJECT_DIR$/pom.xml" />
+        <option value="$PROJECT_DIR$/src/main/java/regression/reinforce/Mountain_car.java" />
+        <option value="$PROJECT_DIR$/src/main/java/regression/reinforce/DeepQ.java" />
         <option value="$PROJECT_DIR$/src/main/java/regression/reinforce/RandFQ.java" />
         <option value="$PROJECT_DIR$/src/main/java/regression/reinforce/Simulation.java" />
       </list>
@@ -132,9 +111,9 @@
   </component>
   <component name="ProjectFrameBounds">
     <option name="x" value="65" />
-    <option name="y" value="-4" />
+    <option name="y" value="24" />
     <option name="width" value="1215" />
-    <option name="height" value="1028" />
+    <option name="height" value="1000" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -163,6 +142,9 @@
     <panes>
       <pane id="Scope" />
       <pane id="Scratches" />
+      <pane id="PackagesPane">
+        <subPane />
+      </pane>
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -255,15 +237,26 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="tests_divers" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DQLMountainCar" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="images" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
-      </pane>
-      <pane id="PackagesPane">
-        <subPane />
       </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="reference.settings.ide.settings.notifications" />
+    <property name="settings.editor.selected.configurable" value="preferences.toDoOptions" />
     <property name="settings.editor.splitter.proportion" value="0.2" />
     <property name="last_opened_file_path" value="$USER_HOME$/Documents/Simulateur" />
     <property name="com.intellij.testIntegration.createTest.CreateTestDialog.defaultLibrary" value="Groovy JUnit" />
@@ -759,37 +752,38 @@
       <option name="presentableId" value="Default" />
       <updated>1460624044927</updated>
     </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="65" y="-4" width="1215" height="1028" extended-state="6" />
+    <frame x="65" y="24" width="1215" height="1000" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Palette" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32362458" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32362458" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="Palette&#9;" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Capture Analysis" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32901832" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Maven Projects" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32038835" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921812" sideWeight="0.5" order="-1" side_tool="true" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Capture Tool" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Designer" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.28312758" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.22114347" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.24938272" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="UI Designer" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="4" side_tool="true" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.3214671" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Coverage" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32921812" sideWeight="0.5" order="6" side_tool="true" content_ui="tabs" />
     </layout>
   </component>
   <component name="UnknownFeatures">
@@ -823,13 +817,43 @@
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" type="java-line">
-          <url>file://$PROJECT_DIR$/src/main/java/regression/reinforce/RandFQ.java</url>
-          <line>348</line>
+          <url>file://$PROJECT_DIR$/src/main/java/regression/reinforce/DeepQ.java</url>
+          <line>174</line>
           <properties />
-          <option name="timeStamp" value="74" />
+          <option name="timeStamp" value="83" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/regression/reinforce/DeepQ.java</url>
+          <line>45</line>
+          <properties />
+          <option name="timeStamp" value="84" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/regression/reinforce/DeepQ.java</url>
+          <line>95</line>
+          <properties />
+          <option name="timeStamp" value="85" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/regression/reinforce/DeepQ.java</url>
+          <line>123</line>
+          <properties />
+          <option name="timeStamp" value="86" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/regression/reinforce/DeepQ.java</url>
+          <line>53</line>
+          <properties />
+          <option name="timeStamp" value="87" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/main/java/regression/reinforce/RandFQ.java</url>
+          <line>117</line>
+          <properties />
+          <option name="timeStamp" value="99" />
         </line-breakpoint>
       </breakpoints>
-      <option name="time" value="76" />
+      <option name="time" value="100" />
     </breakpoint-manager>
     <watches-manager>
       <configuration name="Application">
@@ -844,47 +868,7 @@
     <option name="FILTER_TARGETS" value="false" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/images/imagePolicy25.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imagePolicy24.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imagePolicy17.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/images/imagePolicy5.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imageValue19.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imagePolicy10.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imagePolicy9.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imagePolicy8.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imagePolicy7.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
@@ -894,77 +878,19 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/images/imagePolicy4.png">
+    <entry file="file://$PROJECT_DIR$/images/imagePolicy7.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/images/imageValue42.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imageValue36.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imageValue33.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imageValue32.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imageValue23.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imageValue21.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imageValue20.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/regression/reinforce/Mountain_car.java">
+    <entry file="file://$PROJECT_DIR$/src/main/java/regression/reinforce/DeepQ.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="657">
-          <caret line="72" column="0" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
-          <folding />
+        <state relative-caret-position="795">
+          <caret line="165" column="26" selection-start-line="165" selection-start-column="26" selection-end-line="165" selection-end-column="26" />
+          <folding>
+            <marker date="1461160453078" expanded="false" signature="5209:6589" placeholder="..." />
+          </folding>
         </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imagePolicy0.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imagePolicy1.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imagePolicy2.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imagePolicy3.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/images/imageValue0.png">
-      <provider selected="true" editor-type-id="images">
-        <state />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/images/imageValue1.png">
@@ -1057,6 +983,46 @@
         <state />
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue19.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue21.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue23.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue24.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue25.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue26.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue27.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue28.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/images/imageValue29.png">
       <provider selected="true" editor-type-id="images">
         <state />
@@ -1067,7 +1033,77 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/images/imageValue45.png">
+    <entry file="file://$PROJECT_DIR$/images/imageValue31.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue32.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue36.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue37.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue38.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue39.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue40.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue34.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue41.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue35.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue33.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue43.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue42.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue51.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue52.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
@@ -1077,49 +1113,25 @@
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/images/imageValue49.png">
+    <entry file="file://$PROJECT_DIR$/images/imageValue46.png">
       <provider selected="true" editor-type-id="images">
         <state />
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/regression/reinforce/DeepQ.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="150">
-          <caret line="23" column="23" selection-start-line="23" selection-start-column="18" selection-end-line="23" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/regression/reinforce/RandFQ.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="555">
-          <caret line="49" column="0" selection-start-line="49" selection-start-column="0" selection-end-line="49" selection-end-column="0" />
-          <folding>
-            <element signature="imports" expanded="true" />
-            <element signature="e#2062#2073#0" expanded="true" />
-            <element signature="e#4947#5073#0" expanded="false" />
-            <element signature="e#12533#12544#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/pom.xml">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="22" column="17" selection-start-line="22" selection-start-column="17" selection-end-line="22" selection-end-column="17" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/regression/reinforce/Simulation.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="490">
-          <caret line="91" column="50" selection-start-line="91" selection-start-column="50" selection-end-line="91" selection-end-column="50" />
+        <state relative-caret-position="165">
+          <caret line="173" column="23" selection-start-line="173" selection-start-column="23" selection-end-line="173" selection-end-column="23" />
           <folding>
-            <element signature="e#6863#6877#0" expanded="false" />
-            <marker date="1460998281440" expanded="true" signature="8455:8589" placeholder="{...}" />
+            <element signature="imports" expanded="true" />
+            <marker date="1461166033829" expanded="true" signature="8073:8206" placeholder="{...}" />
           </folding>
         </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/images/imageValue0.png">
+      <provider selected="true" editor-type-id="images">
+        <state />
       </provider>
     </entry>
   </component>

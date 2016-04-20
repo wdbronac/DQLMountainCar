@@ -8,8 +8,11 @@ import org.nd4j.linalg.api.ops.impl.indexaccum.IAMax;
 import org.nd4j.linalg.dataset.DataSet;
 import org.nd4j.linalg.dataset.api.iterator.DataSetIterator;
 import org.nd4j.linalg.factory.Nd4j;
+import weka.classifiers.functions.SMOreg;
+import weka.classifiers.functions.SimpleLogistic;
+import weka.classifiers.lazy.IBk;
 import weka.classifiers.meta.Bagging;
-import weka.classifiers.trees.RandomForest;
+import weka.classifiers.trees.*;
 import weka.classifiers.trees.lmt.SimpleLinearRegression;
 import weka.core.*;
 
@@ -27,7 +30,9 @@ public class RandFQ {
     public double gamma;
     public double lrate;
     public int na;
+//    public SimpleLinearRegression rf;
     public RandomForest rf;
+//    public SMOreg rf;
     public int t  =0;
 
     public RandFQ(double gamma, double lrate, int na) {
@@ -35,8 +40,11 @@ public class RandFQ {
         this.gamma = gamma;
         this.lrate = lrate;
         this.na = na;
+//        this.rf = new SimpleLinearRegression();
+//        this.rf = new SimpleLogistic();
         this.rf = new RandomForest();
-        this.rf.setNumTrees(50);
+//        this.rf = new SMOreg();
+//        this.rf.setNumTrees(50);
 //        this.rf.setNumFeatures(10); //todo : je ne suis pas sur
 //        this.rf.setMaxDepth(10); //todo : je ne suis pas sur
 
@@ -100,10 +108,15 @@ public class RandFQ {
                     instanceForPrediction.setValue(1, next_states_copy.getDouble(1, p));
                 for(int k = 0; k<numactions; k++){
                     instanceForPrediction.setValue(2, k);
-                    oldvalues[k] = rf.distributionForInstance(instanceForPrediction)[0];
+                    oldvalues[k] = rf.classifyInstance(instanceForPrediction);
+//                    oldvalues[k] = rf.distributionForInstance(instanceForPrediction)[0];
 //                    oldvalues[k] = rf.distributionForInstance(instanceForPrediction)[0];
                 }
+
                 newQvalue = rewards.getDouble(0, p) +this.gamma*(1-eoes.getDouble(0,p))*getMaxValue(oldvalues);
+                if (Math.abs(newQvalue) >1){
+                    System.out.println("probleme ici");
+                }
             }
             instance.setValue(3, newQvalue); //todo verifier comment il sait que la qvalue c est le label
 //            if(n){
@@ -344,7 +357,8 @@ public class RandFQ {
             for (int k = 0; k < numactions; k++) {
                 instanceForPrediction.setValue(2, k);
                 instanceForPrediction.setDataset(newDataset);
-                oldvalues[k] = rf.distributionForInstance(instanceForPrediction)[0]; //attention j ai fait ajouter exception puor method signature
+//                oldvalues[k] = rf.distributionForInstance(instanceForPrediction)[0]; //attention j ai fait ajouter exception puor method signature
+                oldvalues[k] = rf.classifyInstance(instanceForPrediction); //attention j ai fait ajouter exception puor method signature
             }
             v.put(0,p, getMaxValue(oldvalues));
 
