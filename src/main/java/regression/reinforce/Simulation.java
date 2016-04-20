@@ -86,7 +86,7 @@ public class Simulation {
 //<<<<<<< HEAD
 //    public static final int batchSize = 4096;
 //=======
-    public static final int batchSize = 30000;
+    public static final int batchSize = 300000;
 //>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
     //Network learning rate
     public static final double learningRate = 0.2;
@@ -96,7 +96,7 @@ public class Simulation {
 
 
     //taille de la dataset qu on genere, voir comment j agence tout ca
-    public static int size_dataset = 30000;
+    public static int size_dataset = 300000;
     public static int num_iterations = 150; // nombre d updates du Q network
 
     //resolution de l image de sortie:
