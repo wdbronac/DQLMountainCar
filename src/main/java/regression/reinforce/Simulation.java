@@ -112,8 +112,8 @@ public class Simulation {
         //Create the network
         final MultiLayerNetwork net = new MultiLayerNetwork(conf);
         net.init();
-//        net.setListeners(Collections.singletonList((IterationListener) new ScoreIterationListener(1)));
-        net.setListeners(new HistogramIterationListener(1));
+        net.setListeners(Collections.singletonList((IterationListener) new ScoreIterationListener(1)));
+//        net.setListeners(new HistogramIterationListener(1));
 
 
         //generer la dataset
