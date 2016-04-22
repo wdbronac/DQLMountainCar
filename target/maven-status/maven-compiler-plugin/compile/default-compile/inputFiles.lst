@@ -1,3 +1,4 @@
+/home/jspw4161/DQLMountainCar/src/main/java/regression/reinforce/ReinforcementDataSetIterator.java
 /home/jspw4161/DQLMountainCar/src/main/java/regression/reinforce/Simulation.java
 /home/jspw4161/DQLMountainCar/src/main/java/regression/RegressionMathFunctions.java
 /home/jspw4161/DQLMountainCar/src/main/java/regression/function/SawtoothMathFunction.java
@@ -11,4 +12,5 @@
 /home/jspw4161/DQLMountainCar/src/main/java/regression/reinforce/vectorPlots/VectorPlotDemo1.java
 /home/jspw4161/DQLMountainCar/src/main/java/regression/reinforce/DeepQ.java
 /home/jspw4161/DQLMountainCar/src/main/java/regression/function/MathFunction.java
+/home/jspw4161/DQLMountainCar/src/main/java/regression/reinforce/MemoIterationListener.java
 /home/jspw4161/DQLMountainCar/src/main/java/regression/RegressionSum.java

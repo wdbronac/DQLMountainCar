@@ -67,61 +67,76 @@ public class DeepQ {
         //todo: aussi il faut que je change tous les tableaux en nd4j je pense
 
         //calculer une bonne fois pour toutes le tableau, si lrate ==1
-        INDArray qValueToPut = Nd4j.zeros(1, N);
-        if(lrate ==1) {
-            for (int k = 0; k < N; k++) { //parcourir chaque transition
-                int index_action = (int) actions.getDouble(0, k);
-                qValueToPut.put(0,k,betterQvalues.getDouble(0, k));
-            }
-        }
+//        INDArray qValueToPut = Nd4j.zeros(1, N);
+//        if(lrate ==1) {
+////            for (int k = 0; k < N; k++) { //parcourir chaque transition
+////                int index_action = (int) actions.getDouble(0, k);
+////                qValueToPut.put(0,k,betterQvalues.getDouble(0, k));
+////            }
+//            qValueToPut.putRow(0, betterQvalues.getRow(0));
+//        }
 
-        for (int i = 0; i < nEpochs; i++) {
+        INDArray totalLabels = Nd4j.zeros(N,2);
+        totalLabels.putColumn(0,betterQvalues); //si ca marche pas, transposer
+        totalLabels.putColumn(1, actions);
+        DataSet data = new DataSet(states_input_copy, totalLabels);
+        data.shuffle(); //todo: faire attention parce que ici je le shuffle partout, c est peut etre bizarre
+        ReinforcementDataSetIterator it = new ReinforcementDataSetIterator(data, batchSize, net);
 
-        INDArray oldQvalues = this.net.output(states_input_copy).transpose();
-        INDArray newQvalues = oldQvalues.dup();
-               //todo: if ( c est l action choisie):
+        for (int i = 0; i < nEpochs ;i++) {
+            //je dois avoir une dataset ici
 
+//
+//        INDArray oldQvalues = this.net.output(states_input_copy).transpose();
+//        INDArray newQvalues = oldQvalues.dup();
+//               //todo: if ( c est l action choisie):
+//
+//
+//        for (int k = 0; k<N; k++) { //parcourir chaque transition
+//            int index_action = (int) actions.getDouble(0, k);
+//            if( lrate != 1){
+//            qValueToPut.put(0,k,oldQvalues.getDouble(index_action, k) + betterQvalues.getDouble(0, k)
+//                    - oldQvalues.getDouble(index_action, k) * lrate);
+//            }
+//            newQvalues.put(index_action, k, qValueToPut.getDouble(0,k)); //todo: simplify, and take in account eoes
+//        }
 
-        for (int k = 0; k<N; k++) { //parcourir chaque transition
-            int index_action = (int) actions.getDouble(0, k);
-            if( lrate != 1){
-            qValueToPut.put(0,k,oldQvalues.getDouble(index_action, k) + betterQvalues.getDouble(0, k)
-                    - oldQvalues.getDouble(index_action, k) * lrate);
-            }
-            newQvalues.put(index_action, k, qValueToPut.getDouble(0,k)); //todo: simplify, and take in account eoes
-        }
-
-        //TODO absolument !!!
-        //TODO: faire en sorte de regler quand on donne la reward
-//        System.out.println(oldQvalues.shape()[0]);
-//        System.out.println(oldQvalues.shape()[1]);
-//        System.out.println(newQvalues.shape()[0]);
-//        System.out.println(newQvalues.shape()[1]);
-
-            //iterator.reset(); // todo: voir si je le mets ou pas
-
-            System.out.println("Prining states some input");
-            for(int co =0; co<N; co++){
-                double posit= states_input_copy.getDouble(co, 0);
-                double veloc= states_input_copy.getDouble(co, 1);
-                if (Math.abs(posit )>1 || Math.abs(veloc )>1){
-                    System.out.println("veloc = " + veloc);
-                    System.out.println("posit = " + posit);
-                }
-            }
-            System.out.println("Printing some newQvalues");
-            for(int co =0; co<N; co++){
-                double newq = newQvalues.getDouble(1, co);
-                if (Math.abs(newq)> 1){
-                    System.out.println("newq = " + newq);
-                }
-            }
-
-
-
-            DataSetIterator iterator = getTrainingData(states_input_copy,newQvalues.transpose(), batchSize,rng);
-
-            net.fit(iterator);
+//            //todo : absolumen simplifier ce point il y a de la redondance
+//
+//        //TODO absolument !!!
+//        //TODO: faire en sorte de regler quand on donne la reward
+////        System.out.println(oldQvalues.shape()[0]);
+////        System.out.println(oldQvalues.shape()[1]);
+////        System.out.println(newQvalues.shape()[0]);
+////        System.out.println(newQvalues.shape()[1]);
+//
+//            //iterator.reset(); // todo: voir si je le mets ou pas
+////
+////            System.out.println("Prining states some input");
+////            for(int co =0; co<N; co++){
+////                double posit= states_input_copy.getDouble(co, 0);
+////                double veloc= states_input_copy.getDouble(co, 1);
+////                if (Math.abs(posit )>1 || Math.abs(veloc )>1){
+////                    System.out.println("veloc = " + veloc);
+////                    System.out.println("posit = " + posit);
+////                }
+////            }
+////            System.out.println("Printing some newQvalues");
+////            for(int co =0; co<N; co++){
+////                double newq = newQvalues.getDouble(1, co);
+////                if (Math.abs(newq)> 1){
+////                    System.out.println("newq = " + newq);
+////                }
+////            }
+////
+////
+//
+//            DataSetIterator iterator = getTrainingData(states_input_copy,newQvalues.transpose(), batchSize,rng);
+//            //for (int ne =0 ; ne<nEpoch; n++){
+            //iter.next(); // ou while iter.hasnNext();
+            //net.fit(iter);
+            //}
+            net.fit(it);
         }
         t++;
 
@@ -182,6 +197,7 @@ public class DeepQ {
         final List<DataSet> list = allData.asList();
         Collections.shuffle(list,rng);
         return new ListDataSetIterator(list,batchSize);
+
     }
 
 
@@ -193,4 +209,7 @@ public class DeepQ {
         return state;
     }
 
+
+
 }
+

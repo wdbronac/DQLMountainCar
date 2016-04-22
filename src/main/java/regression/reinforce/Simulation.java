@@ -52,6 +52,7 @@ import org.nd4j.linalg.factory.Nd4j;
 import org.nd4j.linalg.lossfunctions.LossFunctions;
 
 import javax.swing.*;
+import javax.xml.crypto.Data;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
@@ -71,12 +72,12 @@ public class Simulation {
     //Random number generator seed, for reproducability
     public static final int seed = 12345;
     //Number of iterations per minibatch
-    public static final int iterations = 2000; // avant: 1
+    public static final int iterations = 1; // avant: 1
     //Number of epochs (full passes of the data)
 //<<<<<<< HEAD
 //    public static final int nEpochs = 2; // avant: 2000
 //=======
-    public static final int nEpochs = 1; // avant: 2000
+    public static final int nEpochs = 30; // avant: 2000
 //>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
     //How frequently should we plot the network output?
     public static final int plotFrequency = 500;
@@ -86,10 +87,10 @@ public class Simulation {
 //<<<<<<< HEAD
 //    public static final int batchSize = 4096;
 //=======
-    public static final int batchSize = 300000;
+    public static final int batchSize = 4096;
 //>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
     //Network learning rate
-    public static final double learningRate = 0.2;
+    public static final double learningRate = 0.01;
     public static final Random rng = new Random(seed);
     public static final int numInputs = 2;
     public static final int numOutputs = 3;
@@ -100,7 +101,7 @@ public class Simulation {
     public static int num_iterations = 150; // nombre d updates du Q network
 
     //resolution de l image de sortie:
-    public static int resolution = 60;
+    public static int resolution = 100;
 
 
     public static void main(final String[] args) throws Exception {
@@ -112,7 +113,9 @@ public class Simulation {
         //Create the network
         final MultiLayerNetwork net = new MultiLayerNetwork(conf);
         net.init();
-        net.setListeners(Collections.singletonList((IterationListener) new ScoreIterationListener(1)));
+        MemoIterationListener itlis = new MemoIterationListener(1);
+        net.setListeners(Collections.singletonList((IterationListener) itlis));
+//        net.setListeners(new );
 //        net.setListeners(new HistogramIterationListener(1));
 
 
@@ -134,7 +137,7 @@ public class Simulation {
 
         //pour un certain nombre de pas, faire update
         double gamma = 0.99;
-        double lrate = 1;
+        double lrate = 0.5;
         int na = 3;
 
 
@@ -143,7 +146,8 @@ public class Simulation {
 //                RandFQ Q = new RandFQ(gamma, lrate, na); //todo: switch
 //
         for (int p = 0; p<num_iterations; p++) {
-
+            String path_iterations = System.getProperty("user.dir")+"/images/iterationsCSV"+p+".csv";
+            itlis.flushBuffer();
             System.out.println("Iteration " + p + " on " + num_iterations);
 //            Q.update(states, actions, next_states, rewards,eoes,  batchSize, rng, nEpochs);//todo: mettre les actions dans gen_dataset
             Q.update(states, actions, next_states, rewards,eoes,  batchSize, rng, nEpochs);//todo: mettre les actions dans gen_dataset
@@ -151,54 +155,14 @@ public class Simulation {
            //todo: attention j ai fait add exception to method signature ici (ligne du dessus)
             //on plot les Q-values obtenues
             plot_Q(position, velocity, Q, resolution,p );
+            itlis.writeCSV(path_iterations);
         }
         //todo: c est cici qu il faut rajouter le randf
 
+
     }
 
 
-    /** Returns the network configuration, 2 hidden DenseLayers of size 50.
-     */
-    private static MultiLayerConfiguration getDeepDenseLayerNetworkConfiguration() {
-//<<<<<<< HEAD
-//        final int numHiddenNodes = 6;
-//=======
-        final int numHiddenNodes = 16;
-//>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
-        return new NeuralNetConfiguration.Builder()
-                .seed(seed)
-                .iterations(iterations)
-                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
-//                .optimizationAlgo(OptimizationAlgorithm.LBFGS)
-                .learningRate(learningRate)
-                .updater(Updater.NESTEROVS).momentum(0.9)
-                .list(6)
-                .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(numHiddenNodes)
-                        .activation("relu")
-                        .weightInit(WeightInit.RELU)
-                        .build())
-               .layer(1, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
-                       .activation("relu")
-                       .weightInit(WeightInit.RELU)
-                       .build())
-                .layer(2, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
-                        .activation("relu")
-                        .weightInit(WeightInit.RELU)
-                        .build())
-                .layer(3, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
-                        .activation("relu")
-                        .weightInit(WeightInit.RELU)
-                        .build())
-                .layer(4, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
-                        .activation("relu")
-                        .weightInit(WeightInit.RELU)
-                        .build())
-                .layer(5, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
-                        .activation("identity")
-                        .weightInit(WeightInit.ZERO)
-                        .nIn(numHiddenNodes).nOut(numOutputs).build())
-                .pretrain(false).backprop(true).build();
-    }
 /*
     /** Create a DataSetIterator for training
      * @param x X values
@@ -253,7 +217,6 @@ public class Simulation {
         dataSet.addSeries(s);
     }
     */
-
     private static void plot_Q(double [] position, double[] velocity, DeepQ deepQ, int resolution, int i ) throws IOException{
         System.out.println("Creating the image...");
         //verifier parce que je vais avoir un max de pbs avec la shape...
@@ -278,8 +241,23 @@ public class Simulation {
         image_greedy_policy = image_greedy_policy.divi(image_greedy_policy.maxNumber());
         //todo: changer pour mettre ici le randf
 
-        image_greedy_policy = image_greedy_policy.reshape(resolution, resolution);
         System.out.println("Result computed.");
+
+        //writes the header of the csv file
+        String[] header = {"policyValues"};
+        CSVWriter writer = new CSVWriter(new FileWriter(System.getProperty("user.dir")+"/images/policyCSV"+i+".csv"), ',');
+        // feed in your array (or convert your data to an array)
+        writer.writeNext(header);
+        for(int k=0; k<resolution*resolution; k++){
+            String[] entries = new String[1];
+            entries[0] = String.valueOf(image_greedy_policy.getDouble(0, k));
+            // feed in your array (or convert your data to an array)
+            writer.writeNext(entries);
+        }
+
+        image_greedy_policy = image_greedy_policy.reshape(resolution, resolution);
+
+
         String outputFile = System.getProperty("user.dir")+"/images/imagePolicy"+i+".png";
         ImageRender.render(image_greedy_policy, outputFile);
         System.out.println("Image Created.");
@@ -290,11 +268,28 @@ public class Simulation {
         INDArray image_Qvalue = Nd4j.getExecutioner().exec(new Max(result.dup()), 0); //todo: voir si je m en foutrais pas du dup
         image_Qvalue = image_Qvalue.subi(image_Qvalue.minNumber());
         image_Qvalue = image_Qvalue.divi(image_Qvalue.maxNumber());
-        image_Qvalue =image_Qvalue.reshape(resolution, resolution);
         //todo: changer pour mettre ici le randf
-
+        writer.close();
 
         System.out.println("Result computed.");
+
+        //writes the header of the csv file
+        header[0] = "Qvalues";
+        writer = new CSVWriter(new FileWriter(System.getProperty("user.dir")+"/images/qvalueCSV"+i+".csv"), ',');
+        // feed in your array (or convert your data to an array)
+        writer.writeNext(header);
+        for(int k=0; k<resolution*resolution; k++){
+            String[] entries = new String[1];
+            entries[0] = String.valueOf(image_Qvalue.getDouble(0, k));
+            // feed in your array (or convert your data to an array)
+            writer.writeNext(entries);
+        }
+        image_Qvalue =image_Qvalue.reshape(resolution, resolution);
+        writer.close();
+
+
+
+
         String outputFile2 = System.getProperty("user.dir")+"/images/imageValue"+i+".png";
         ImageRender.render(image_Qvalue, outputFile2);
         System.out.println("Image Created.");
@@ -303,7 +298,6 @@ public class Simulation {
         //todo: ici, plutot utiliser la methode predict c est pplus simple
 
     }
-
 
     private static void plot_Q(double [] position, double[] velocity, RandFQ rfQ, int resolution, int i ) throws Exception {
         System.out.println("Creating the image...");
@@ -356,9 +350,10 @@ public class Simulation {
         System.out.println("image_Qvalue[resolution-1][0] = " + image_Qvalue.getDouble(resolution-1,0));
         System.out.println("Image Created.");
 
+
+
+        //todo: voir quand le writer se close
     }
-
-
 
 
     public static void plot_dataset(INDArray states, INDArray actions, INDArray next_states) throws IOException {
@@ -392,6 +387,9 @@ public class Simulation {
         //setContentPane(chartPanel);
     }
 
+
+
+
     /**
      * Creates a sample chart.
      *
@@ -399,6 +397,7 @@ public class Simulation {
      *
      * @return A sample chart.
 //     */
+
 //    private static JFreeChart createChart(VectorXYDataset dataset) {
 //
 //        //todo: rajouter un truc pour mettre de couleurs differentes les differents graphes
@@ -464,6 +463,54 @@ public class Simulation {
 //        }
 //        return dataset;
 //    }
+    /** Returns the network configuration, 2 hidden DenseLayers of size 50.
+     */
+    private static MultiLayerConfiguration getDeepDenseLayerNetworkConfiguration() {
+//<<<<<<< HEAD
+//        final int numHiddenNodes = 6;
+//=======
+        final int numHiddenNodes = 16;
+//>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
+        return new NeuralNetConfiguration.Builder()
+                .seed(seed)
+                .iterations(iterations)
+                .optimizationAlgo(OptimizationAlgorithm.STOCHASTIC_GRADIENT_DESCENT)
+//                .optimizationAlgo(OptimizationAlgorithm.LBFGS)
+                .learningRate(learningRate)
+                .updater(Updater.NESTEROVS).momentum(0.9)
+                .list(6)
+                .layer(0, new DenseLayer.Builder().nIn(numInputs).nOut(numHiddenNodes)
+                        .activation("relu")
+                        .weightInit(WeightInit.RELU)
+                        .dropOut(0.5)
+                        .build())
+                .layer(1, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+                        .activation("relu")
+                        .weightInit(WeightInit.RELU)
+                        .dropOut(0.5)
+                        .build())
+                .layer(2, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+                        .activation("relu")
+                        .weightInit(WeightInit.RELU)
+                        .dropOut(0.5)
+                        .build())
+                .layer(3, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+                        .activation("relu")
+                        .weightInit(WeightInit.RELU)
+                        .dropOut(0.5)
+                        .build())
+                .layer(4, new DenseLayer.Builder().nIn(numHiddenNodes).nOut(numHiddenNodes)
+                        .activation("relu")
+                        .weightInit(WeightInit.RELU)
+                        .dropOut(0.5)
+                        .build())
+                .layer(5, new OutputLayer.Builder(LossFunctions.LossFunction.MSE)
+                        .activation("identity")
+                        .weightInit(WeightInit.ZERO)
+//                        .dropOut(0.5) //bonne idee de mettre du dropout sur la derniere couche ?
+                        .nIn(numHiddenNodes).nOut(numOutputs).build())
+                .pretrain(false).backprop(true).build();
+    }
 
 
 }
