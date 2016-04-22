@@ -77,7 +77,7 @@ public class Simulation {
 //<<<<<<< HEAD
 //    public static final int nEpochs = 2; // avant: 2000
 //=======
-    public static final int nEpochs = 30; // avant: 2000
+    public static final int nEpochs = 500; // avant: 2000
 //>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
     //How frequently should we plot the network output?
     public static final int plotFrequency = 500;

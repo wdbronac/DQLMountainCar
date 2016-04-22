@@ -95,7 +95,7 @@ public class ReinforcementDataSetIterator implements DataSetIterator{
         @Override
         public synchronized void reset() {
             curr = 0;
-            data.shuffle();
+//            data.shuffle();
             //todo: see if I should put the "shuffle" method
         }
 
