@@ -59,6 +59,9 @@ import java.util.List;
 import java.util.Random;
 
 import org.nd4j.linalg.api.ops.impl.indexaccum.IAMax;
+
+import static java.util.Objects.isNull;
+
 /**Example: Train a network to reproduce certain mathematical functions, and plot the results.
  * Plotting of the network output occurs every 'plotFrequency' epochs. Thus, the plot shows the accuracy of the network
  * predictions as training progresses.
@@ -87,7 +90,7 @@ public class Simulation {
 //<<<<<<< HEAD
 //    public static final int batchSize = 4096;
 //=======
-    public static final int batchSize = 300000;
+//    public static int batchSize = 300000;
 //>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
     //Network learning rate
     public static final double learningRate = 0.01;
@@ -104,7 +107,10 @@ public class Simulation {
     public static int resolution = 100;
 
 
-    public static void main(final String[] args) throws Exception {
+    public static void main(String[] args) throws Exception {
+
+        int batchSize = Integer.parseInt(args[0]);
+//            int batchSize = 5;
         String type = "MLP";
         //String type  = "RF";
         //Switch these two options to do different functions with different networks
