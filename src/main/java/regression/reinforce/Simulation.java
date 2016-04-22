@@ -87,7 +87,7 @@ public class Simulation {
 //<<<<<<< HEAD
 //    public static final int batchSize = 4096;
 //=======
-    public static final int batchSize = 4096*4;
+    public static final int batchSize = 32;
 //>>>>>>> 19b0a6be78d36e2ab13c2897376adacc3b76c5c9
     //Network learning rate
     public static final double learningRate = 0.01;

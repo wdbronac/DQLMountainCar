@@ -80,7 +80,7 @@ public class DeepQ {
         totalLabels.putColumn(0,betterQvalues); //si ca marche pas, transposer
         totalLabels.putColumn(1, actions);
         DataSet data = new DataSet(states_input_copy, totalLabels);
-        data.shuffle(); //todo: faire attention parce que ici je le shuffle partout, c est peut etre bizarre
+//        data.shuffle(); //todo: faire attention parce que ici je le shuffle partout, c est peut etre bizarre
         ReinforcementDataSetIterator it = new ReinforcementDataSetIterator(data, batchSize, net);
 
         for (int i = 0; i < nEpochs ;i++) {
